@@ -1,0 +1,2100 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plano_Grelhas_410</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--red:#e53e3e;--blue:#2b6cb0;--dark:#0d1117;--surface:#161b22;--surface2:#21262d;--border:#30363d;--text:#e6edf3;--muted:#7d8590;--gold:#f0b429;--silver:#a8b2be;--bronze:#cb7d2e;--green:#3fb950;--purple:#8b5cf6;--accent:#1f6feb;--orange:#f97316;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--dark);color:var(--text);font-family:'Barlow',sans-serif;min-height:100vh;overflow-x:hidden;}
+.header{background:linear-gradient(90deg,#0d1117,#161b22);border-bottom:1px solid var(--border);padding:8px 16px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:200;box-shadow:0 2px 20px rgba(0,0,0,.5);}
+.header-icon{font-size:24px;}
+.header-title{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:900;color:var(--text);letter-spacing:1px;}
+.header-sub{font-size:10px;color:var(--muted);}
+.legend{margin-left:auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.legend-item{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--muted);}
+.legend-dot{width:11px;height:11px;border-radius:3px;flex-shrink:0;}
+.btn-hdr{border:none;border-radius:6px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Barlow',sans-serif;transition:opacity .15s;}
+.btn-hdr:hover{opacity:.85;}
+.tabs-bar{display:flex;background:var(--surface);border-bottom:2px solid var(--border);padding:0 16px;}
+.tab-btn{padding:8px 22px;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:800;color:var(--muted);border:none;background:transparent;cursor:pointer;letter-spacing:.5px;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .15s;}
+.tab-btn.active{color:var(--text);border-bottom-color:var(--accent);}
+.tab-btn.active.t-ferramentas{border-bottom-color:var(--orange);}
+.tab-content{display:none;}
+.tab-content.active{display:flex;height:calc(100vh - 92px);}
+.planogram-wrap{flex:1;overflow:auto;padding:10px;}
+.planogram{display:flex;gap:6px;align-items:flex-start;min-width:600px;}
+/* Grid planogram - corredores full-width */
+.pgram-grid{display:grid;min-width:820px;}
+.pgram-corridor-full{font-size:9px;font-weight:700;color:var(--gold);text-align:center;background:rgba(240,180,41,.08);border:1px solid rgba(240,180,41,.2);border-radius:4px;padding:2px 8px;letter-spacing:1px;white-space:nowrap;grid-column:1/-1;width:100%;margin:3px 0;}
+.pgram-corridor-full.orn{color:var(--orange);background:rgba(249,115,22,.08);border-color:rgba(249,115,22,.2);}
+.pgram-cell{display:flex;flex-direction:column;align-items:center;gap:4px;padding:3px 4px;}
+.vert-label{writing-mode:vertical-rl;transform:rotate(180deg);font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;color:var(--muted);letter-spacing:3px;align-self:center;white-space:nowrap;}
+.col{display:flex;flex-direction:column;gap:3px;}
+.corridor{font-size:8px;font-weight:700;color:var(--gold);text-align:center;background:rgba(240,180,41,.08);border:1px solid rgba(240,180,41,.2);border-radius:3px;padding:1px 5px;letter-spacing:.5px;white-space:nowrap;}
+.corridor.orn{color:var(--orange);background:rgba(249,115,22,.08);border-color:rgba(249,115,22,.2);}
+.cr-block{border-radius:8px;padding:5px 7px;min-width:88px;max-width:106px;cursor:pointer;position:relative;transition:transform .15s,box-shadow .15s,filter .15s;border:2px solid transparent;}
+.cr-block:hover{transform:translateY(-3px) scale(1.06);box-shadow:0 8px 24px rgba(0,0,0,.6),0 2px 6px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.15);filter:brightness(1.14);}
+.cr-block.selected{border-color:var(--gold)!important;box-shadow:0 0 0 3px rgba(240,180,41,.35)!important;}
+.cr-block.red{background:linear-gradient(135deg,#c53030,#9b2c2c);}
+.cr-block.blue{background:linear-gradient(135deg,#2c5282,#1a365d);}
+.cr-id{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:800;color:rgba(255,255,255,.95);letter-spacing:.5px;}
+.cr-side-tag{font-size:8px;color:rgba(255,255,255,.6);font-weight:600;}
+.cr-content{margin-top:2px;}
+.cr-empty{background:rgba(255,255,255,.1);border-radius:4px;padding:3px;text-align:center;font-size:8px;color:rgba(255,255,255,.45);font-weight:600;}
+/* Horizontal arts list inside normal CRs */
+.cr-arts-list{display:flex;flex-direction:row;flex-wrap:wrap;gap:2px;}
+.cr-art-item{background:rgba(255,255,255,.93);border-radius:3px;padding:2px 3px;position:relative;width:100%;}
+.cr-art-item img,.cr-art-img-ph{display:none!important;}
+.cr-loc-badge{font-size:6.5px;font-weight:800;color:#fff;background:#1d4ed8;border-radius:2px;padding:0 3px;margin-top:1px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;letter-spacing:.1px;}
+
+.art-name{font-size:7.5px;font-weight:700;color:#1a202c;line-height:1.2;max-height:26px;overflow:hidden;margin-top:0;}
+.art-code{font-size:6.5px;color:#718096;font-weight:600;}
+.art-badges{display:flex;gap:2px;align-items:center;flex-wrap:wrap;margin-top:1px;}
+.badge-mrg{font-size:6.5px;border-radius:2px;padding:0 2px;font-weight:700;}
+.badge-bs{font-size:6.5px;border-radius:2px;padding:0 2px;font-weight:700;color:#fff;}
+.btn-rm-art{position:absolute;top:1px;right:1px;background:rgba(239,68,68,.85);border:none;color:#fff;border-radius:2px;font-size:7px;cursor:pointer;padding:0 3px;line-height:13px;display:none;}
+.cr-art-item:hover .btn-rm-art{display:block;}
+/* CR1024 top banner - horizontal wide display */
+.cr1024-top{background:linear-gradient(90deg,#1a365d,#2c5282);border-radius:10px;padding:10px 16px;margin-bottom:10px;border:2px solid rgba(99,179,237,.3);cursor:pointer;transition:border-color .15s;}
+.cr1024-top:hover{border-color:var(--gold);}
+.cr1024-top.selected{border-color:var(--gold);box-shadow:0 0 0 3px rgba(240,180,41,.3);}
+.cr1024-header{display:flex;align-items:center;gap:10px;margin-bottom:6px;}
+.cr1024-label{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;color:#fff;letter-spacing:1px;}
+.cr1024-arts{display:flex;flex-direction:row;gap:8px;flex-wrap:wrap;min-height:24px;}
+.cr1024-art-card{background:rgba(255,255,255,.93);border-radius:6px;padding:5px 7px;display:flex;align-items:center;gap:7px;position:relative;min-width:160px;max-width:220px;cursor:default;}
+.cr1024-art-card img{width:42px;height:42px;object-fit:contain;border-radius:4px;background:#f0f4f8;flex-shrink:0;}
+.cr1024-art-ph{width:42px;height:42px;background:#e2e8f0;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.cr1024-art-info{flex:1;min-width:0;}
+.cr1024-art-name{font-size:9px;font-weight:700;color:#1a202c;line-height:1.25;}
+.cr1024-art-ref{font-size:8px;color:#4a5568;font-weight:600;}
+.cr1024-art-mrg{font-size:8px;font-weight:700;margin-top:2px;}
+.cr1024-empty{color:rgba(255,255,255,.35);font-size:11px;font-style:italic;padding:4px 0;}
+.btn-rm-cr1024{position:absolute;top:3px;right:3px;background:rgba(239,68,68,.8);border:none;color:#fff;border-radius:3px;font-size:9px;cursor:pointer;padding:1px 4px;display:none;}
+.cr1024-art-card:hover .btn-rm-cr1024{display:block;}
+/* Badge on article card showing it's been placed */
+.art-placed-tags{display:flex;gap:3px;flex-wrap:wrap;margin-top:3px;}
+.art-placed-tag{font-size:8px;font-weight:700;border-radius:3px;padding:1px 5px;color:#fff;}
+.pc-block{background:#276749;border-radius:6px;padding:5px 10px;font-size:11px;font-weight:800;color:#fff;text-align:center;border:1px solid #38a169;}
+.tooltip-hint{font-size:10px;color:var(--muted);text-align:center;margin-top:6px;}
+.panel{width:0;overflow:hidden;transition:width .3s cubic-bezier(.4,0,.2,1);background:var(--surface);border-left:1px solid var(--border);display:flex;flex-direction:column;}
+.panel.open{width:390px;}
+.panel-header{padding:10px 12px;border-bottom:1px solid var(--border);background:var(--dark);flex-shrink:0;}
+.panel-cr-title{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:900;color:var(--text);display:flex;align-items:center;gap:8px;}
+.panel-cr-side{font-size:10px;padding:2px 7px;border-radius:4px;color:#fff;font-weight:700;}
+.panel-search{width:100%;background:var(--dark);border:1px solid var(--border);border-radius:7px;padding:6px 10px;color:var(--text);font-size:12px;outline:none;font-family:'Barlow',sans-serif;margin-top:7px;}
+.panel-search:focus{border-color:var(--accent);}
+.panel-filters{display:flex;gap:4px;margin-top:6px;}
+.filter-btn{flex:1;padding:4px 0;border-radius:5px;border:1px solid var(--border);background:var(--surface2);color:var(--muted);font-size:9.5px;font-weight:700;cursor:pointer;font-family:'Barlow',sans-serif;transition:all .15s;}
+.filter-btn.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+.panel-assigned{background:var(--dark);border-radius:7px;padding:7px;margin-top:7px;display:flex;flex-direction:column;gap:4px;}
+.assigned-item{display:flex;align-items:center;gap:7px;}
+.assigned-thumb{width:34px;height:34px;object-fit:contain;border-radius:4px;background:var(--surface2);flex-shrink:0;}
+.assigned-info{flex:1;min-width:0;}
+.assigned-desc{font-size:9.5px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.assigned-ref{font-size:8.5px;color:var(--muted);}
+.btn-remove{background:none;border:none;color:#f85149;cursor:pointer;font-size:14px;padding:2px;}
+.btn-close-panel{background:none;border:none;color:var(--muted);font-size:17px;cursor:pointer;padding:2px 5px;}
+.btn-close-panel:hover{color:var(--text);}
+.panel-body{flex:1;overflow-y:auto;padding:7px;}
+.panel-body::-webkit-scrollbar{width:4px;}
+.panel-body::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+.art-card{background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:8px 9px;margin-bottom:6px;display:flex;gap:8px;align-items:flex-start;}
+.art-card.gold{border-color:var(--gold);background:rgba(240,180,41,.07);}
+.art-card.silver{border-color:var(--silver);background:rgba(168,178,190,.07);}
+.art-card.bronze{border-color:var(--bronze);background:rgba(203,125,46,.07);}
+.art-thumb{width:46px;height:46px;object-fit:contain;border-radius:5px;background:#fff;flex-shrink:0;}
+.art-thumb-ph{width:46px;height:46px;border-radius:5px;background:var(--surface);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:18px;}
+.art-info{flex:1;min-width:0;}
+.art-bs-badge{font-size:9px;font-weight:700;border-radius:3px;padding:1px 5px;margin-bottom:2px;display:inline-block;}
+.art-desc{font-size:10.5px;font-weight:700;color:var(--text);line-height:1.3;}
+.art-ref{font-size:9px;color:var(--muted);margin-top:1px;}
+.art-loc{font-size:8.5px;color:#58a6ff;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.art-stats{display:flex;gap:7px;margin-top:3px;flex-wrap:wrap;}
+.stat{font-size:9.5px;font-weight:700;}
+.art-actions{flex-shrink:0;display:flex;flex-direction:column;gap:4px;}
+.btn-assign{border:none;border-radius:5px;padding:5px 9px;font-size:10px;font-weight:700;cursor:pointer;font-family:'Barlow',sans-serif;transition:opacity .15s;white-space:nowrap;}
+.btn-assign:hover{opacity:.8;}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:500;align-items:flex-start;justify-content:center;padding-top:40px;overflow-y:auto;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px;width:900px;max-width:96vw;max-height:85vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.7);}
+.modal-sm{width:460px;}
+.modal h2{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;margin-bottom:14px;color:var(--text);}
+.modal-tabs{display:flex;gap:6px;margin-bottom:14px;}
+.modal-tab{padding:5px 16px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;font-family:'Barlow',sans-serif;}
+.modal-tab.active{background:var(--purple);color:#fff;border-color:var(--purple);}
+.xxl-table{width:100%;border-collapse:collapse;font-size:11px;}
+.xxl-table th{background:var(--surface2);color:var(--muted);padding:7px 10px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);}
+.xxl-table td{padding:8px 10px;border-bottom:1px solid rgba(48,54,61,.5);vertical-align:middle;}
+.xxl-table tr:hover td{background:rgba(255,255,255,.03);}
+.xxl-cr-tag{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:800;padding:2px 7px;border-radius:4px;color:#fff;display:inline-block;}
+.xxl-thumb{width:40px;height:40px;object-fit:contain;border-radius:4px;background:#fff;}
+.btn-rm-xxl{background:none;border:none;color:#f85149;cursor:pointer;font-size:13px;}
+.form-row{display:flex;flex-direction:column;gap:4px;margin-bottom:10px;}
+.form-row label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
+.form-input{background:var(--dark);border:1px solid var(--border);border-radius:7px;padding:7px 10px;color:var(--text);font-size:12px;outline:none;font-family:'Barlow',sans-serif;width:100%;}
+.form-input:focus{border-color:var(--accent);}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.img-upload-area{border:2px dashed var(--border);border-radius:8px;padding:14px;text-align:center;cursor:pointer;transition:border-color .15s;font-size:12px;color:var(--muted);}
+.img-upload-area:hover{border-color:var(--accent);}
+.modal-actions{display:flex;gap:8px;margin-top:14px;}
+.btn-modal{flex:1;padding:9px;border-radius:7px;border:none;font-size:12px;font-weight:700;cursor:pointer;font-family:'Barlow',sans-serif;}
+.btn-save{background:var(--green);color:#000;}
+.btn-cancel{background:var(--surface2);color:var(--text);border:1px solid var(--border);}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+@media print{
+  @page{size:A3 landscape;margin:8mm 10mm;}
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
+  body{background:#fff!important;color:#000!important;font-size:8pt;}
+  .header,.tabs-bar,.side-panel,.panel-overlay,.modal-overlay,
+  .tooltip-hint,.btn-hdr,#btnSave,#saveStatus,.legend{display:none!important;}
+  .tab-content{display:none!important;}
+  .tab-content.print-active{display:block!important;}
+  .planogram-wrap{overflow:visible!important;padding:0!important;background:#fff!important;}
+  .planogram{gap:6px!important;min-width:unset!important;transform-origin:top left;}
+  /* CR blocks */
+  .cr-block{break-inside:avoid;min-width:90px!important;max-width:120px!important;padding:5px 6px!important;border-radius:5px!important;}
+  .cr-block.red{background:#fde8e8!important;border-color:#e53e3e!important;}
+  .cr-block.blue{background:#e8f0fe!important;border-color:#2b6cb0!important;}
+  .cr-id{font-size:10pt!important;color:#000!important;}
+  .cr-side-tag{font-size:7pt!important;}
+  /* Art items inside CR */
+  .cr-art-item{background:#f8f8f8!important;border:1px solid #ddd!important;padding:3px!important;margin-bottom:2px!important;}
+  .art-name{font-size:6.5pt!important;color:#000!important;max-height:none!important;}
+  .art-code{font-size:6pt!important;color:#555!important;}
+  .cr-loc-badge{font-size:6pt!important;background:#1d4ed8!important;color:#fff!important;padding:1px 3px!important;}
+  .badge-mrg{font-size:6pt!important;}
+  .badge-bs{font-size:6pt!important;}
+  .btn-rm-art{display:none!important;}
+  /* Corridors */
+  .corridor,.corridor.orn{font-size:7pt!important;padding:2px 6px!important;border-radius:3px!important;}
+  /* vert label */
+  .vert-label{font-size:7pt!important;}
+  /* Print header */
+  .print-header{display:block!important;}
+}
+.print-header{display:none;}
+/* --- MOBILE RESPONSIVE ---------------------------------------- */
+@media (max-width: 768px){
+  .header{padding:6px 10px;gap:6px;flex-wrap:wrap;}
+  .header-title{font-size:15px;}
+  .header-sub{display:none;}
+  .legend{display:none;}
+  /* Header buttons   scrollable row */
+  .header-btns{display:flex;gap:5px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:2px;width:100%;order:3;flex:0 0 100%;}
+  .header-btns::-webkit-scrollbar{display:none;}
+  .btn-hdr{font-size:10px;padding:5px 9px;white-space:nowrap;flex-shrink:0;}
+  #saveStatus{font-size:9px;order:2;margin-left:auto;}
+  /* Tabs */
+  .tabs-bar{padding:0 8px;}
+  .tab-btn{padding:8px 14px;font-size:12px;}
+  /* Main layout   stack vertically */
+  .tab-content.active{flex-direction:column;height:calc(100vh - 88px);}
+  /* Planogram   scrollable, smaller CRs */
+  .planogram-wrap{flex:1;overflow:auto;padding:6px;-webkit-overflow-scrolling:touch;}
+  .cr-block{min-width:72px;max-width:88px;padding:4px 5px;}
+  .cr-id{font-size:10px;}
+  .cr-side-tag{font-size:7px;}
+  .cr-art-item{padding:1px 2px;}
+  .art-name{font-size:6.5px;}
+  .art-code{font-size:6px;}
+  /* Panel   bottom sheet on mobile */
+  .panel{width:100%!important;position:fixed;bottom:0;left:0;right:0;z-index:400;border-left:none;border-top:1px solid var(--border);border-radius:16px 16px 0 0;transition:transform .3s cubic-bezier(.4,0,.2,1),height .3s;height:0;overflow:hidden;}
+  .panel.open{width:100%!important;height:75vh;overflow:hidden;}
+  .panel-header{padding:8px 12px;border-radius:16px 16px 0 0;}
+  .panel-header::before{content:'';display:block;width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 8px;}
+  .panel-body{height:calc(75vh - 120px);overflow-y:auto;}
+  /* Art cards   single column, touch-friendly */
+  .art-card{flex-wrap:wrap;padding:8px;}
+  .art-thumb,.art-thumb-ph{width:38px;height:38px;}
+  .art-actions{flex-direction:row;flex-wrap:wrap;gap:4px;width:100%;margin-top:6px;}
+  .btn-assign{font-size:10px;padding:6px 10px;flex:1;}
+  /* Modals   full screen on mobile */
+  .modal-overlay{padding-top:0;padding:0;align-items:flex-end;}
+  .modal{width:100%!important;max-width:100%!important;border-radius:16px 16px 0 0!important;max-height:90vh;padding:16px;}
+  .modal-sm{width:100%!important;max-width:100%!important;}
+  .modal h2{font-size:18px;margin-bottom:10px;}
+  /* Make filter buttons bigger for touch */
+  .filter-btn{padding:7px 4px;font-size:9px;}
+  /* Loc picker grid   single column on very small screens */
+  #locPickerSecs{grid-template-columns:1fr 1fr;}
+  #secAddSecs{grid-template-columns:1fr 1fr;}
+  /* Bottom nav safe area */
+  .panel.open{padding-bottom:env(safe-area-inset-bottom);}
+  /* Zoom hint for planogram */
+  .zoom-hint{display:flex;}
+}
+@media (max-width: 400px){
+  #locPickerSecs{grid-template-columns:1fr;}
+  #secAddSecs{grid-template-columns:1fr;}
+  .btn-assign{font-size:9px;padding:5px 6px;}
+}
+@media (min-width: 769px){
+  .zoom-hint{display:none!important;}
+  .header-btns{display:contents;} /* reset for desktop */
+}
+.zoom-hint{display:none;font-size:9px;color:var(--muted);text-align:center;padding:3px;background:var(--surface2);border-radius:4px;margin:4px 6px 0;}
+/* Touch-friendly tap area for CR blocks on mobile */
+@media (hover:none){
+  .cr-block:hover{transform:none;box-shadow:none;filter:none;}
+  .cr-block:active{transform:scale(.97);filter:brightness(1.1);}
+  .cr-art-item:hover .btn-rm-art{display:none;}
+  .cr-art-item .btn-rm-art{display:block!important;font-size:9px;padding:1px 4px;line-height:14px;}
+}
+/* Scrollbar hidden on touch */
+@media (max-width:768px){
+  *::-webkit-scrollbar{width:0;height:0;}
+}
+</style>
+</head>
+<body>
+<!-- PRINT HEADER (only visible when printing) -->
+<div class="print-header" id="printHeader" style="display:none;padding:0 0 6mm 0;border-bottom:2px solid #1d4ed8;margin-bottom:5mm;">
+  <div style="display:flex;align-items:center;justify-content:space-between;">
+    <div>
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:20pt;font-weight:900;color:#1d4ed8;letter-spacing:1px;">PLANO_GRELHAS_410</div>
+      <div id="printSubtitle" style="font-size:9pt;color:#555;margin-top:1mm;font-weight:600;"></div>
+    </div>
+    <div style="text-align:right;">
+      <div id="printDate" style="font-size:8pt;color:#888;"></div>
+      <div style="font-size:7pt;color:#aaa;margin-top:1mm;">Ferragens &amp; Ferramentas · Secção 410</div>
+    </div>
+  </div>
+</div>
+<!-- HEADER -->
+<div class="header">
+  <span class="header-icon">🔧</span>
+  <div>
+    <div class="header-title">PLANO_GRELHAS_410</div>
+    <div class="header-sub" id="statsBar">A carregar...</div>
+  </div>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#e53e3e"></div>Esquerda</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#2b6cb0"></div>Direita</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--gold)"></div>🥇 Gold BS</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--silver)"></div>🥈 Silver BS</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--bronze)"></div>🥉 Bronze BS</div>
+  </div>
+  <div class="header-btns">
+    <button class="btn-hdr" style="background:#1e3a5f;color:#93c5fd;border:1px solid #2d4a6e" onclick="printA3()">🖨 A3</button>
+    <button class="btn-hdr" style="background:var(--purple);color:#fff" onclick="openXXLModal()">📋 XXL</button>
+    <button class="btn-hdr" style="background:#0d9488;color:#fff" onclick="openLocModal()">📍 Loc</button>
+    <button class="btn-hdr" style="background:var(--green);color:#000" onclick="openAddModal()">➕ Artigo</button>
+    <button class="btn-hdr" id="btnSave" style="background:#f59e0b;color:#000;font-weight:700" onclick="artifactSave()">💾 Gravar</button>
+    <span id="saveStatus" style="font-size:10px;color:var(--muted);white-space:nowrap;align-self:center;"></span>
+  </div>
+</div>
+<div class="zoom-hint">👆 Desliza para ver o planograma · Toca numa CR para editar</div>
+
+<!-- TABS -->
+<div class="tabs-bar">
+  <button class="tab-btn active" id="tab-ferragens" onclick="switchTab('ferragens')">🔩 Ferragens</button>
+  <button class="tab-btn t-ferramentas" id="tab-ferramentas" onclick="switchTab('ferramentas')">🔨 Ferramentas</button>
+</div>
+<!-- Helper macro: build a full planogram section -->
+<!-- TAB: FERRAGENS -->
+<div class="tab-content active" id="content-ferragens">
+  <div class="planogram-wrap" id="wrap-ferragens">
+    <div class="planogram" id="pgram-ferragens"></div>
+    <div class="tooltip-hint">💡 Clique num CR · Pode atribuir vários artigos por CR</div>
+  </div>
+  <div class="panel" id="panel-ferragens">
+    <div class="panel-header">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div class="panel-cr-title" id="ptitle-ferragens">—</div>
+        <button class="btn-close-panel" onclick="closePanel('ferragens')">✕</button>
+      </div>
+      <div id="passigned-ferragens" class="panel-assigned" style="display:none"></div>
+      <div style="display:flex;gap:4px;margin-bottom:6px;">
+        <button class="filter-btn active" id="ferragens-src-ferragens" onclick="setListSrc('ferragens','ferragens')">🔩 Ferragens</button>
+        <button class="filter-btn" id="ferragens-src-ferramentas" onclick="setListSrc('ferragens','ferramentas')">🔨 Ferramentas</button>
+      </div>
+      <input class="panel-search" id="psearch-ferragens" placeholder="🔍 Pesquisar artigo..." oninput="renderList('ferragens')">
+      <div class="panel-filters">
+        <button class="filter-btn active" id="ferragens-f-all" onclick="setFilter('ferragens','all')">Todos</button>
+        <button class="filter-btn" id="ferragens-f-topbs" onclick="setFilter('ferragens','topbs')">⭐ Best Sellers</button>
+        <button class="filter-btn" id="ferragens-f-loc" onclick="setFilter('ferragens','loc')">📍 Ferragens</button>
+      </div>
+    </div>
+    <div class="panel-body" id="pbody-ferragens"></div>
+  </div>
+</div>
+<!-- TAB: FERRAMENTAS -->
+<div class="tab-content" id="content-ferramentas">
+  <div class="planogram-wrap" id="wrap-ferramentas">
+    <div class="planogram" id="pgram-ferramentas"></div>
+    <div class="tooltip-hint">💡 Clique num CR · Pode atribuir vários artigos por CR</div>
+  </div>
+  <div class="panel" id="panel-ferramentas">
+    <div class="panel-header">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div class="panel-cr-title" id="ptitle-ferramentas">—</div>
+        <button class="btn-close-panel" onclick="closePanel('ferramentas')">✕</button>
+      </div>
+      <div id="passigned-ferramentas" class="panel-assigned" style="display:none"></div>
+      <div style="display:flex;gap:4px;margin-bottom:6px;">
+        <button class="filter-btn active" id="ferramentas-src-ferramentas" onclick="setListSrc('ferramentas','ferramentas')">🔨 Ferramentas</button>
+        <button class="filter-btn" id="ferramentas-src-ferragens" onclick="setListSrc('ferramentas','ferragens')">🔩 Ferragens</button>
+      </div>
+      <input class="panel-search" id="psearch-ferramentas" placeholder="🔍 Pesquisar artigo..." oninput="renderList('ferramentas')">
+      <div class="panel-filters">
+        <button class="filter-btn active" id="ferramentas-f-all" onclick="setFilter('ferramentas','all')">Todos</button>
+        <button class="filter-btn" id="ferramentas-f-topbs" onclick="setFilter('ferramentas','topbs')">⭐ Best Sellers</button>
+        <button class="filter-btn" id="ferramentas-f-loc" onclick="setFilter('ferramentas','loc')">📍 Ferramentas</button>
+      </div>
+    </div>
+    <div class="panel-body" id="pbody-ferramentas"></div>
+  </div>
+</div>
+<!-- LOC PICKER MODAL -->
+<div class="modal-overlay" id="locPickerModal">
+  <div class="modal modal-sm" style="max-height:85vh;overflow-y:auto;max-width:480px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <h2 style="font-size:16px">📍 Localização</h2>
+      <button class="btn-close-panel" style="font-size:20px" onclick="closeLocPicker()">✕</button>
+    </div>
+    <div id="locPickerArtName" style="font-size:11px;font-weight:700;color:var(--text);background:var(--surface2);border-radius:6px;padding:7px 10px;margin-bottom:10px;"></div>
+    <div style="display:flex;gap:4px;margin-bottom:10px;">
+      <button id="lpTab-secs" onclick="switchLPTab('secs')" class="filter-btn active" style="flex:1;font-size:10px;">🏪 Secções</button>
+      <button id="lpTab-corredor" onclick="switchLPTab('corredor')" class="filter-btn" style="flex:1;font-size:10px;">🔢 Corredor</button>
+    </div>
+    <!-- Panel: secções -->
+    <div id="lpPanel-secs">
+      <div style="font-size:10px;color:var(--muted);margin-bottom:8px;font-weight:700;text-transform:uppercase;letter-spacing:.5px">Seleciona a(s) secção(ões)</div>
+      <div id="locPickerSecs" style="display:grid;grid-template-columns:1fr 1fr;gap:6px;"></div>
+      <div style="display:flex;gap:8px;margin-top:10px;">
+        <button onclick="confirmSecPicker(false)" style="flex:1;background:#1d4ed8;color:#fff;border:none;border-radius:6px;padding:8px;font-weight:700;font-size:11px;cursor:pointer;" id="lpSecConfirmBtn">✔ Confirmar na CR</button>
+        <button onclick="confirmSecPicker(true)" style="flex:1;background:#7c3aed;color:#fff;border:none;border-radius:6px;padding:8px;font-weight:700;font-size:11px;cursor:pointer;">📌 Só Secção</button>
+      </div>
+      <div style="font-size:9px;color:var(--muted);margin-top:5px;text-align:center;">«Só Secção» — coloca o artigo na secção sem CR</div>
+    </div>
+    <!-- Panel: corredor -->
+    <div id="lpPanel-corredor" style="display:none;">
+      <div style="font-size:10px;color:var(--muted);margin-bottom:8px;font-weight:700;text-transform:uppercase;letter-spacing:.5px">Número / Código do corredor</div>
+      <input id="lpCorredorInput" type="text" placeholder="Ex: 3 · A4 · Corredor 2..." onclick="event.stopPropagation()"
+        style="width:100%;background:var(--dark);border:1px solid var(--border);border-radius:6px;padding:10px 14px;color:var(--text);font-size:16px;font-weight:800;outline:none;box-sizing:border-box;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;text-align:center;"
+        oninput="updateCorredorPreview()" onkeydown="if(event.key==='Enter')confirmCorredorPicker()">
+      <div id="lpCorredorPreview" style="margin-top:10px;padding:10px;background:var(--surface2);border-radius:6px;text-align:center;min-height:36px;"></div>
+      <div style="display:flex;gap:8px;margin-top:10px;">
+        <button onclick="confirmCorredorPicker()" style="flex:1;background:#b45309;color:#fff;border:none;border-radius:6px;padding:8px;font-weight:700;font-size:12px;cursor:pointer;">✔ Guardar Corredor</button>
+        <button onclick="document.getElementById('lpCorredorInput').value='';updateCorredorPreview();" style="background:var(--surface2);color:var(--muted);border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:12px;cursor:pointer;" title="Limpar">✕</button>
+        <button onclick="closeLocPicker()" style="background:var(--surface2);color:var(--muted);border:1px solid var(--border);border-radius:6px;padding:8px 14px;font-weight:700;font-size:12px;cursor:pointer;">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- EDIT LOC MODAL -->
+<div class="modal-overlay" id="editLocModal" style="z-index:900;">
+  <div class="modal modal-sm" style="max-height:85vh;overflow-y:auto;max-width:480px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <h2 style="font-size:16px">✏️ Editar Localização</h2>
+      <button class="btn-close-panel" style="font-size:20px" onclick="document.getElementById('editLocModal').classList.remove('open')">✕</button>
+    </div>
+    <div id="editLocArtName" style="font-size:11px;font-weight:700;color:var(--text);background:var(--surface2);border-radius:6px;padding:7px 10px;margin-bottom:12px;"></div>
+    <div style="font-size:10px;color:var(--muted);margin-bottom:6px;font-weight:700;text-transform:uppercase;letter-spacing:.5px">Secções</div>
+    <div id="editLocSecs" style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:12px;"></div>
+    <div style="font-size:10px;color:var(--muted);margin-bottom:6px;font-weight:700;text-transform:uppercase;letter-spacing:.5px">Corredor</div>
+    <input id="editLocCorredor" type="text" placeholder="Ex: 3 - A4 - Corredor 2..."
+      style="width:100%;background:var(--dark);border:1px solid var(--border);border-radius:6px;padding:8px 12px;color:var(--text);font-size:14px;font-weight:700;outline:none;box-sizing:border-box;font-family:'Barlow Condensed',sans-serif;text-align:center;margin-bottom:12px;">
+    <div style="font-size:10px;color:var(--muted);margin-bottom:6px;font-weight:700;text-transform:uppercase;letter-spacing:.5px">Colaborador/a responsável</div>
+    <select id="editLocColab" style="width:100%;background:var(--dark);border:1px solid var(--border);border-radius:6px;padding:8px 12px;color:var(--text);font-size:12px;outline:none;box-sizing:border-box;font-family:'Barlow',sans-serif;margin-bottom:14px;">
+      <option value="">— Nenhum/a —</option>
+      <option value="Daniela Oliveira">👤 Daniela Oliveira</option>
+      <option value="Elvira Santos">👤 Elvira Santos</option>
+      <option value="Beatriz Mariani">👤 Beatriz Mariani</option>
+      <option value="Carolina Tavares">👤 Carolina Tavares</option>
+      <option value="António Oliveira">👤 António Oliveira</option>
+      <option value="Sara Pinheiro">👤 Sara Pinheiro</option>
+    </select>
+    <div style="display:flex;gap:8px;">
+      <button onclick="saveEditLoc()" style="flex:1;background:#7c3aed;color:#fff;border:none;border-radius:6px;padding:9px;font-weight:700;font-size:12px;cursor:pointer;">✔ Guardar</button>
+      <button onclick="document.getElementById('editLocModal').classList.remove('open')" style="background:var(--surface2);color:var(--muted);border:1px solid var(--border);border-radius:6px;padding:9px 14px;font-weight:700;font-size:12px;cursor:pointer;">Cancelar</button>
+    </div>
+  </div>
+</div>
+<!-- LOC MODAL -->
+<div class="modal-overlay" id="locModal">
+  <div class="modal" style="max-width:900px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <h2>📍 Localizações</h2>
+      <div style="display:flex;align-items:center;gap:8px">
+        <input id="locSearch" class="panel-search" style="width:180px;margin-top:0" placeholder="🔍 Pesquisar..." oninput="renderLocView()">
+        <button onclick="openSecAddModal()" style="background:#7c3aed;color:#fff;border:none;border-radius:6px;padding:5px 10px;font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap;">📌 + Secção</button>
+        <button class="btn-close-panel" style="font-size:20px" onclick="closeLocModal()">✕</button>
+      </div>
+    </div>
+    <div class="modal-tabs">
+      <div class="modal-tab active" id="loctab-ferragens" onclick="switchLocTab('ferragens')">🔩 Ferragens</div>
+      <div class="modal-tab" id="loctab-ferramentas" onclick="switchLocTab('ferramentas')">🔨 Ferramentas</div>
+    </div>
+    <div id="loc-body" style="margin-top:8px;max-height:62vh;overflow-y:auto;"></div>
+  </div>
+</div>
+
+<!-- SEC ADD MODAL — artigo em secção sem CR -->
+<div class="modal-overlay" id="secAddModal">
+  <div class="modal modal-sm" style="max-height:85vh;overflow-y:auto;max-width:500px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <h2 style="font-size:16px">📌 Adicionar a Secção</h2>
+      <button class="btn-close-panel" style="font-size:20px" onclick="closeSecAddModal()">✕</button>
+    </div>
+    <div style="font-size:10px;color:var(--muted);margin-bottom:8px;">Coloca um artigo numa secção sem estar associado a nenhuma CR.</div>
+    <!-- Pesquisa artigo -->
+    <input id="secAddSearch" type="text" placeholder="🔍 Pesquisar artigo..." oninput="renderSecAddList()"
+      style="width:100%;background:var(--dark);border:1px solid var(--border);border-radius:6px;padding:7px 10px;color:var(--text);font-size:11px;outline:none;box-sizing:border-box;font-family:'Barlow',sans-serif;margin-bottom:8px;">
+    <!-- Art source tabs -->
+    <div style="display:flex;gap:4px;margin-bottom:8px;">
+      <button id="secAddSrc-ferragens" onclick="setSecAddSrc('ferragens')" class="filter-btn active" style="flex:1;font-size:10px;">🔩 Ferragens</button>
+      <button id="secAddSrc-ferramentas" onclick="setSecAddSrc('ferramentas')" class="filter-btn" style="flex:1;font-size:10px;">🔨 Ferramentas</button>
+    </div>
+    <!-- Art list -->
+    <div id="secAddArtList" style="max-height:200px;overflow-y:auto;display:flex;flex-direction:column;gap:4px;margin-bottom:10px;"></div>
+    <!-- Selected art -->
+    <div id="secAddSelected" style="display:none;background:var(--surface2);border-radius:6px;padding:8px 10px;margin-bottom:10px;font-size:11px;font-weight:700;color:var(--text);"></div>
+    <!-- Secções -->
+    <div style="font-size:10px;color:var(--muted);margin-bottom:6px;font-weight:700;text-transform:uppercase;letter-spacing:.5px">Secção(ões)</div>
+    <div id="secAddSecs" style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:10px;"></div>
+    <!-- Corredor -->
+    <div style="font-size:10px;color:var(--muted);margin-bottom:6px;font-weight:700;text-transform:uppercase;letter-spacing:.5px">Corredor (opcional)</div>
+    <input id="secAddCorredor" type="text" placeholder="Ex: 3 - A4 - Corredor 2..."
+      style="width:100%;background:var(--dark);border:1px solid var(--border);border-radius:6px;padding:7px 10px;color:var(--text);font-size:13px;font-weight:700;outline:none;box-sizing:border-box;font-family:'Barlow Condensed',sans-serif;text-align:center;margin-bottom:10px;">
+    <div style="font-size:10px;color:var(--muted);margin-bottom:6px;font-weight:700;text-transform:uppercase;letter-spacing:.5px">Colaborador/a responsável</div>
+    <select id="secAddColab" style="width:100%;background:var(--dark);border:1px solid var(--border);border-radius:6px;padding:8px 12px;color:var(--text);font-size:12px;outline:none;box-sizing:border-box;font-family:'Barlow',sans-serif;margin-bottom:12px;">
+      <option value="">— Nenhum/a —</option>
+      <option value="Daniela Oliveira">👤 Daniela Oliveira</option>
+      <option value="Elvira Santos">👤 Elvira Santos</option>
+      <option value="Beatriz Mariani">👤 Beatriz Mariani</option>
+      <option value="Carolina Tavares">👤 Carolina Tavares</option>
+      <option value="António Oliveira">👤 António Oliveira</option>
+      <option value="Sara Pinheiro">👤 Sara Pinheiro</option>
+    </select>
+    <div style="display:flex;gap:8px;">
+      <button onclick="confirmSecAdd()" style="flex:1;background:#7c3aed;color:#fff;border:none;border-radius:6px;padding:9px;font-weight:700;font-size:12px;cursor:pointer;">📌 Guardar</button>
+      <button onclick="closeSecAddModal()" style="background:var(--surface2);color:var(--muted);border:1px solid var(--border);border-radius:6px;padding:9px 14px;font-weight:700;font-size:12px;cursor:pointer;">Cancelar</button>
+    </div>
+  </div>
+</div>
+<!-- XXL MODAL -->
+<div class="modal-overlay" id="xxlModal">
+  <div class="modal">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <h2>📋 Tabela XXL</h2>
+      <button class="btn-close-panel" style="font-size:20px" onclick="closeXXLModal()">✕</button>
+    </div>
+    <div class="modal-tabs">
+      <div class="modal-tab active" id="xxltab-ferragens" onclick="switchXXLTab('ferragens')">🔩 Ferragens</div>
+      <div class="modal-tab" id="xxltab-ferramentas" onclick="switchXXLTab('ferramentas')">🔨 Ferramentas</div>
+    </div>
+    <div id="xxl-body"></div>
+  </div>
+</div>
+<!-- ADD MODAL -->
+<div class="modal-overlay" id="addModal">
+  <div class="modal modal-sm">
+    <h2>➕ Novo Artigo</h2>
+    <div class="modal-tabs" style="margin-bottom:12px">
+      <div class="modal-tab active" id="addsec-ferragens" onclick="setAddSec('ferragens')">🔩 Ferragens</div>
+      <div class="modal-tab" id="addsec-ferramentas" onclick="setAddSec('ferramentas')">🔨 Ferramentas</div>
+    </div>
+    <div class="form-row"><label>Descrição *</label><input class="form-input" id="nDesc" placeholder="Nome do artigo..."></div>
+    <div class="form-grid">
+      <div class="form-row"><label>Referência *</label><input class="form-input" id="nRef" placeholder="Ex: 19796980"></div>
+      <div class="form-row"><label>Localização</label><input class="form-input" id="nLoc" placeholder="Ex: FERRAGENS"></div>
+    </div>
+    <div class="form-grid">
+      <div class="form-row"><label>Vendas €</label><input class="form-input" id="nVendas" type="number" placeholder="0"></div>
+      <div class="form-row"><label>Margem €</label><input class="form-input" id="nMrge" type="number" placeholder="0"></div>
+    </div>
+    <div class="form-grid">
+      <div class="form-row"><label>Margem % (ex: 0.35)</label><input class="form-input" id="nMrgp" type="number" step="0.001" placeholder="0.000"></div>
+      <div class="form-row"><label>Qtd</label><input class="form-input" id="nQtd" type="number" placeholder="0"></div>
+    </div>
+    <div class="form-row"><label>Best Seller</label><select class="form-input" id="nBS"><option value="0">Não</option><option value="1">Sim</option></select></div>
+    <div class="form-row">
+      <label>Imagem</label>
+      <div class="img-upload-area" onclick="document.getElementById('nImg').click()">
+        <div id="nImgPreview">📷 Clique para carregar imagem</div>
+      </div>
+      <input type="file" id="nImg" accept="image/*" style="display:none" onchange="previewImg(this)">
+    </div>
+    <div class="modal-actions">
+      <button class="btn-modal btn-cancel" onclick="closeAddModal()">Cancelar</button>
+      <button class="btn-modal btn-save" onclick="saveArticle()">✅ Guardar</button>
+    </div>
+  </div>
+</div>
+<script>
+// --- DATA ---
+const DATA = {
+ferragens:[
+{artigo:"19796980",descricao:"*PACK ESTENDAL TRADI 2/3 ZINC+FERRAGENS",localizacao:"FERRAGENS",vendas:133972.65,mrge:39863.04,mrgp:0.3658,topBS:1,img:null},
+{artigo:"17050530",descricao:"*B QUIMICA 300ML POLI+2 MIST STANDERS",localizacao:"MATERIAIS|CONFORTO|FERRAGENS",vendas:120310.8,mrge:38046.86,mrgp:0.3889,topBS:1,img:null},
+{artigo:"19821011",descricao:"ROLO FILME TRANSPARENTE 0.45X100M",localizacao:"MATERIAIS|ARRUMACAO|LINHA DE CAIXAS",vendas:116522.41,mrge:39687.43,mrgp:0.4188,topBS:1,img:null},
+{artigo:"14413511",descricao:"ENROLADOR EMBUTIR P/ESTORES",localizacao:"FERRAGENS",vendas:86523.8,mrge:8978.6,mrgp:0.1276,topBS:1,img:null},
+{artigo:"82462720",descricao:"TAMBORETE PLASTICO 2D DOBR 40CM 150KG",localizacao:"ARRUMACAO|COZINHAS",vendas:49696.74,mrge:16376.2,mrgp:0.405,topBS:1,img:null},
+{artigo:"86511075",descricao:"CX SEG C/ COMBI STANDERS 116X96X40MM L2",localizacao:"FERRAGENS|LINHA DE CAIXAS",vendas:46517.27,mrge:11113.18,mrgp:0.2936,topBS:1,img:null},
+{artigo:"82040820",descricao:"KIT BUCHA QUIM 150ML+ACESS PP",localizacao:"CONFORTO|FERRAGENS",vendas:43156.51,mrge:13254.56,mrgp:0.3777,topBS:1,img:null},
+{artigo:"14413595",descricao:"ENROLADOR P/ESTORE BRANCO + FITA 5M",localizacao:"FERRAGENS",vendas:35998.31,mrge:6814.79,mrgp:0.2328,topBS:1,img:null},
+{artigo:"82679040",descricao:"MOLAS ROUPA PLASTICO AZ/AM/VERM 50UN",localizacao:"FERRAGENS|LINHA DE CAIXAS",vendas:34950.35,mrge:9399.7,mrgp:0.3304,topBS:1,img:null},
+{artigo:"81871891",descricao:"12 BUCHAS+PFS MULT D6X30MM DUOPOWER",localizacao:"MADEIRAS|FERRAGENS|LINHA DE CAIXAS",vendas:32302.33,mrge:11062.01,mrgp:0.421,topBS:1,img:null},
+{artigo:"14413686",descricao:"FITA P/ESTORES 6.5MTS CINZENTA",localizacao:"FERRAGENS",vendas:30516.7,mrge:5085.68,mrgp:0.205,topBS:1,img:null},
+{artigo:"81871892",descricao:"8 BUCHAS+PFS MULT 8X40MM DUOPOWER",localizacao:"MADEIRAS|FERRAGENS|LINHA DE CAIXAS",vendas:29015.54,mrge:8869.51,mrgp:0.3759,topBS:1,img:null},
+{artigo:"10350242",descricao:"CABIDE VASSOURA TRIPLO BR",localizacao:"ARRUMACAO|COZINHAS|PINTURA|LINHA DE CAIXAS",vendas:27993.87,mrge:12232.67,mrgp:0.5373,topBS:1,img:null},
+{artigo:"89125618",descricao:"CABO ACO ZINC PLAST 2/3MM 25M TRANS STD",localizacao:"ARRUMACAO",vendas:21927.08,mrge:10856.03,mrgp:0.6086,topBS:1,img:null},
+{artigo:"84914172",descricao:"SUP C/ RODAS REDOND 300X300X82.5MM 100KG",localizacao:"ARRUMACAO",vendas:19041.68,mrge:10104.45,mrgp:0.6524,topBS:1,img:null},
+{artigo:"88398832",descricao:"2 BATENTES CHAO ADES/PARAF INOX INSPIRE",localizacao:"MADEIRAS|FERRAGENS",vendas:18523.48,mrge:9288.47,mrgp:0.616,topBS:1,img:null},
+{artigo:"84914150",descricao:"SUP C/ RODAS AJUST 40KG MONO DIREC",localizacao:"FERRAGENS|COZINHAS",vendas:18302.87,mrge:9450.2,mrgp:0.6348,topBS:1,img:null},
+{artigo:"81933014",descricao:"30BUCH+PARAF MULTIMAT D6X40MM",localizacao:"MADEIRAS|FERRAGENS|LINHA DE CAIXAS",vendas:16764.7,mrge:7179.16,mrgp:0.5266,topBS:1,img:null},
+{artigo:"10127950",descricao:"SUPORTE P/QUADROS FACIL",localizacao:"DECORACAO|LINHA DE CAIXAS",vendas:14596.88,mrge:4398.06,mrgp:0.3705,topBS:1,img:null},
+{artigo:"82010669",descricao:"TAMBORETE PLASTICO 1D DOBR 23CM 150KG",localizacao:"ARRUMACAO|COZINHAS",vendas:14486.59,mrge:4547.92,mrgp:0.3859,topBS:1,img:null},
+{artigo:"84695199",descricao:"CX ARRUM C/DIV DEXTER 39X28.4X6CM",localizacao:"LINHA DE CAIXAS|MADEIRAS|ARRUMACAO",vendas:14299.76,mrge:5936.88,mrgp:0.5105,topBS:1,img:null},
+{artigo:"85066273",descricao:"123 FELTROS ADS STANDERS FELTS BG",localizacao:"FERRAGENS|ROUPEIROS",vendas:12764.59,mrge:5819.68,mrgp:0.5602,topBS:1,img:null},
+{artigo:"82222858",descricao:"1000 PARAF C.CONIC PH A.FOSFAT PR 3.5X25",localizacao:"MATERIAIS",vendas:12507.62,mrge:2901.39,mrgp:0.285,topBS:1,img:null},
+{artigo:"12450214",descricao:"SUPORTE P/QUADROS BIEN",localizacao:"DECORACAO|LINHA DE CAIXAS",vendas:12109.86,mrge:6731.33,mrgp:0.6837,topBS:1,img:null},
+{artigo:"91008012",descricao:"10 PORTA ETIQUETAS STANDERS 20MM COR",localizacao:"FERRAGENS",vendas:11810.16,mrge:5719.89,mrgp:0.5955,topBS:1,img:null},
+{artigo:"87960219",descricao:"CADEADO STANDERS COD ACO 40MM CURTO PT",localizacao:"ARRUMACAO|LINHA DE CAIXAS",vendas:11765.3,mrge:5147.3,mrgp:0.534,topBS:1,img:null},
+{artigo:"89133469",descricao:"2 CINTAS FIVELA 25MMX275CM 200KG STD",localizacao:"MATERIAIS|FERRAGENS",vendas:11525.88,mrge:6389.15,mrgp:0.6815,topBS:1,img:null},
+{artigo:"81933016",descricao:"10BUCH+PARAF MULTIMAT D8X50MM",localizacao:"MADEIRAS|FERRAGENS|LINHA DE CAIXAS",vendas:11144.96,mrge:4856.77,mrgp:0.5357,topBS:1,img:null},
+{artigo:"85066285",descricao:"FELTRO ADES STANDERS RECORT 200X200MM BG",localizacao:"FERRAGENS|LINHA DE CAIXAS",vendas:10610.08,mrge:5107.5,mrgp:0.5919,topBS:1,img:null},
+{artigo:"82231803",descricao:"KC_35PARAF C.PLAN OVAL PZ A.CROM 4X16",localizacao:"MADEIRAS",vendas:9921.64,mrge:4067.96,mrgp:0.5041,topBS:1,img:null},
+{artigo:"82240466",descricao:"KC_100TAPA PARAF PLAST ADES BR D13MM",localizacao:"MADEIRAS",vendas:9889.79,mrge:4221.61,mrgp:0.524,topBS:1,img:null},
+{artigo:"87960230",descricao:"CADEADO STANDERS COD ACO 30MM CURTO PT",localizacao:"ARRUMACAO|LINHA DE CAIXAS",vendas:8413.83,mrge:3653.94,mrgp:0.5337,topBS:1,img:null},
+{artigo:"14721910",descricao:"16 SUP PRAT P/VIDRO D5MM TRANSP",localizacao:"MADEIRAS",vendas:8396.67,mrge:4390.3,mrgp:0.6429,topBS:1,img:null},
+{artigo:"85066292",descricao:"20 GOTAS ADESIVAS STANDERS D10MM",localizacao:"FERRAGENS|LINHA DE CAIXAS",vendas:7858.87,mrge:3947.0,mrgp:0.6176,topBS:1,img:null},
+{artigo:"81933011",descricao:"25BUCH+PARAF MULTIMAT D5X30MM",localizacao:"MADEIRAS|FERRAGENS|LINHA DE CAIXAS",vendas:7725.69,mrge:3416.86,mrgp:0.5437,topBS:1,img:null},
+{artigo:"19494741",descricao:"PREGO ADESIVO AJUSTAVEL PAREDE PINT 1KG",localizacao:"FERRAGENS|DECORACAO|LINHA DE CAIXAS",vendas:7663.82,mrge:937.23,mrgp:0.1503,topBS:1,img:null},
+{artigo:"18899174",descricao:"FEC HO REGULAVEL P/ARMARIOS",localizacao:"COZINHAS|SANITARIOS",vendas:7110.86,mrge:3339.71,mrgp:0.5774,topBS:1,img:null},
+{artigo:"85066293",descricao:"24 GOTAS ADESIVAS STANDERS D8MM",localizacao:"FERRAGENS|LINHA DE CAIXAS",vendas:6873.85,mrge:3523.22,mrgp:0.6303,topBS:1,img:null},
+{artigo:"88398875",descricao:"6 BATENTES PAREDE ADESIVO TRANSP INSPIRE",localizacao:"MADEIRAS|FERRAGENS",vendas:6262.62,mrge:3204.36,mrgp:0.6287,topBS:1,img:null},
+{artigo:"88398905",descricao:"BATENTE BLOQ CHAO 2 ANEIS INOX INSPIRE",localizacao:"LINHA DE CAIXAS",vendas:6178.91,mrge:2888.66,mrgp:0.5746,topBS:1,img:null},
+{artigo:"87960233",descricao:"CADEADO STANDERS CODIGO LATAO 20MM CURTO",localizacao:"FERRAGENS|LINHA DE CAIXAS",vendas:5370.66,mrge:2283.92,mrgp:0.5225,topBS:1,img:null},
+{artigo:"11032791",descricao:"6 FECHOS IMAN PEQUENOS BR. 4KG",localizacao:"COZINHAS|FERRAGENS",vendas:4712.83,mrge:2063.49,mrgp:0.5384,topBS:1,img:null},
+{artigo:"82095585",descricao:"FECH+ CHAVE P/CONTADORES AGUA NIQUEL",localizacao:"CANALIZACAO",vendas:4352.47,mrge:1883.84,mrgp:0.532,topBS:0,img:null},
+{artigo:"14721924",descricao:"16 SUP PRAT P/VIDRO D5MM BR",localizacao:"MADEIRAS",vendas:3918.0,mrge:2176.33,mrgp:0.6831,topBS:1,img:null},
+{artigo:"17839486",descricao:"PWERSTRIPS 2CBIDES MLDURA+4TIRS BR",localizacao:"DECORACAO",vendas:3539.98,mrge:846.33,mrgp:0.2939,topBS:1,img:null},
+{artigo:"84924156",descricao:"PACK 24 MOLAS MADEIRA 70MM",localizacao:"FERRAGENS|LINHA DE CAIXAS",vendas:3440.52,mrge:1265.03,mrgp:0.4521,topBS:1,img:null},
+{artigo:"84377046",descricao:"CABIDE VASSOURA REMOVIVEL INOFIX BRANCO",localizacao:"FERRAGENS|PINTURA",vendas:3056.34,mrge:1229.21,mrgp:0.4942,topBS:0,img:null},
+{artigo:"14519715",descricao:"4 MOLAS P/TOALHA INOFIX BRANCO",localizacao:"JARDIM|DECORACAO|LINHA DE CAIXAS",vendas:1106.74,mrge:595.02,mrgp:0.6606,topBS:0,img:null}
+],
+ferramentas:[
+{artigo:"84987822",descricao:"LUBRIFICANTE WD-40 DUPLA ACAO 200ML",localizacao:"JARDIM|LINHA DE CAIXAS",vendas:121095.41,mrge:16671.43,mrgp:0.1693,topBS:1,img:null},
+{artigo:"83684286",descricao:"X-ACTO 18MM BIMATERIA DEXTER",localizacao:"FERRAMENTAS|LINHA DE CAIXAS",vendas:87074.93,mrge:38163.14,mrgp:0.5389,topBS:1,img:null},
+{artigo:"90319457",descricao:"7 PANOS MICROFIBRA RECICLADO 7 CORES",localizacao:"FERRAMENTAS",vendas:86984.14,mrge:33358.08,mrgp:0.4716,topBS:1,img:null},
+{artigo:"88035252",descricao:"10 LUVAS UNIV TCHSCR NYL/LATEX DEXTER 9L",localizacao:"FERRAMENTAS",vendas:71024.79,mrge:30900.09,mrgp:0.4352,topBS:1,img:null},
+{artigo:"88035290",descricao:"LUVAS UNIVERSAIS NYL/LATEX DEXTER 9L",localizacao:"FERRAMENTAS",vendas:59908.79,mrge:18430.94,mrgp:0.3076,topBS:1,img:null},
+{artigo:"82612493",descricao:"CHAVE INGLESA DEXTER 250MM",localizacao:"FERRAMENTAS",vendas:47075.8,mrge:15959.51,mrgp:0.3391,topBS:1,img:null},
+{artigo:"85609116",descricao:"FITA METRICA 5M 19MM DEXTER",localizacao:"FERRAMENTAS",vendas:43614.39,mrge:18584.09,mrgp:0.4261,topBS:1,img:null},
+{artigo:"88035236",descricao:"OCULOS PROTECAO AJUSTAV POLICARB DEXTER",localizacao:"FERRAMENTAS",vendas:41336.15,mrge:16872.74,mrgp:0.4082,topBS:1,img:null},
+{artigo:"82375729",descricao:"JOELHEIRA PROTECAO",localizacao:"FERRAMENTAS",vendas:41289.03,mrge:17523.09,mrgp:0.4242,topBS:1,img:null},
+{artigo:"19557783",descricao:"SET 48PCS CHAVES FENDA DEXTER",localizacao:"FERRAMENTAS",vendas:41099.72,mrge:19499.31,mrgp:0.4746,topBS:1,img:null},
+{artigo:"82375896",descricao:"COLETE ALTA VISIBILIDADE DEXTER AMARELO",localizacao:"FERRAMENTAS",vendas:40773.11,mrge:12712.81,mrgp:0.3117,topBS:1,img:null},
+{artigo:"83684277",descricao:"10 LAMINAS X-ACTO 18MM DEXTER",localizacao:"FERRAMENTAS|LINHA DE CAIXAS",vendas:40670.08,mrge:21416.74,mrgp:0.5266,topBS:1,img:null},
+{artigo:"85609122",descricao:"FITA METRICA 5M 25MM DEXTER PRO",localizacao:"FERRAMENTAS",vendas:37012.24,mrge:16380.12,mrgp:0.4427,topBS:1,img:null},
+{artigo:"13998474",descricao:"1KG BARRAS COLA 12MM TRANSP BOLSA",localizacao:"FERRAMENTAS|LINHA DE CAIXAS",vendas:33374.51,mrge:10473.2,mrgp:0.3138,topBS:1,img:null},
+{artigo:"81897415",descricao:"5 LIXAS PERFUR DISCO D225 G120 DEXTER",localizacao:"FERRAMENTAS",vendas:32377.51,mrge:16163.49,mrgp:0.4989,topBS:1,img:null},
+{artigo:"85609125",descricao:"FITA METRICA 8M 25MM DEXTER PRO",localizacao:"FERRAMENTAS",vendas:30966.92,mrge:14435.49,mrgp:0.4664,topBS:1,img:null},
+{artigo:"82008002",descricao:"CONJ 31 PONTAS DEXTER",localizacao:"FERRAMENTAS",vendas:30336.09,mrge:16624.18,mrgp:0.548,topBS:1,img:null},
+{artigo:"85609119",descricao:"FITA METRICA 8M 25MM DEXTER",localizacao:"FERRAMENTAS",vendas:29925.36,mrge:8304.79,mrgp:0.2775,topBS:1,img:null},
+{artigo:"18800891",descricao:"ALICATE CORTE 160MM DEXTER",localizacao:"FERRAMENTAS",vendas:28777.66,mrge:13530.74,mrgp:0.4703,topBS:1,img:null},
+{artigo:"88035246",descricao:"LUVAS UNIVERSAIS NYL/LATEX DEXTER 8M",localizacao:"FERRAMENTAS",vendas:28722.23,mrge:13822.07,mrgp:0.4813,topBS:1,img:null},
+{artigo:"88035326",descricao:"3 MASCARA CONCHA DESC C/VALV FFP2 DEXTER",localizacao:"FERRAMENTAS",vendas:28717.28,mrge:12762.47,mrgp:0.4444,topBS:1,img:null},
+{artigo:"82111331",descricao:"CORTA-TUBOS PVC DEXTER 42MM",localizacao:"FERRAMENTAS",vendas:28613.6,mrge:12467.73,mrgp:0.4357,topBS:1,img:null},
+{artigo:"17615920",descricao:"ESPONJA PEDREIRO 170X110X55MM",localizacao:"FERRAMENTAS",vendas:27681.38,mrge:12862.0,mrgp:0.4648,topBS:1,img:null},
+{artigo:"83684295",descricao:"X-ACTO NAVALHA DEXTER",localizacao:"FERRAMENTAS",vendas:26479.12,mrge:13861.81,mrgp:0.5235,topBS:1,img:null},
+{artigo:"13592985",descricao:"WD-40 SPRAY WD40 100ML CLIP",localizacao:"JARDIM|LINHA DE CAIXAS",vendas:25313.67,mrge:5860.21,mrgp:0.2315,topBS:1,img:null},
+{artigo:"19563572",descricao:"CONJ CHAVES FENDA +12PONTAS DEXTER",localizacao:"FERRAMENTAS",vendas:24801.77,mrge:11415.81,mrgp:0.4603,topBS:1,img:null},
+{artigo:"89193733",descricao:"CHAVE LAVATORIO ESPECIAL MONO DEXTER",localizacao:"FERRAMENTAS",vendas:23723.6,mrge:10337.48,mrgp:0.4356,topBS:1,img:null},
+{artigo:"83684294",descricao:"X-ACTO DOBRAVEL DEXTER",localizacao:"FERRAMENTAS",vendas:23373.07,mrge:11319.4,mrgp:0.4843,topBS:1,img:null},
+{artigo:"85609115",descricao:"FITA METRICA 3M 16MM DEXTER",localizacao:"FERRAMENTAS",vendas:21880.25,mrge:10587.94,mrgp:0.4839,topBS:1,img:null},
+{artigo:"89182277",descricao:"APARAFUSADORA SEM FIO DEXTER 3.6V",localizacao:"FERRAMENTAS",vendas:21753.15,mrge:5667.35,mrgp:0.2605,topBS:1,img:null},
+{artigo:"13642300",descricao:"MASSA CONSISTENTE DE LITIO 3EM1 PRO 150G",localizacao:"FERRAMENTAS",vendas:21625.89,mrge:5791.41,mrgp:0.2677,topBS:1,img:null},
+{artigo:"18805165",descricao:"ALICATE UNIVERSAL 180MM DEXTER",localizacao:"FERRAMENTAS",vendas:20620.92,mrge:10692.25,mrgp:0.5185,topBS:1,img:null},
+{artigo:"84721320",descricao:"SET 25PCS BROCAS E PONTAS DEXTER",localizacao:"FERRAMENTAS",vendas:20503.04,mrge:10557.79,mrgp:0.5147,topBS:1,img:null},
+{artigo:"17958136",descricao:"PISTOLA SILICONE MANUAL MG 100 WOLF",localizacao:"FERRAMENTAS",vendas:20369.19,mrge:7559.48,mrgp:0.3711,topBS:1,img:null},
+{artigo:"67168724",descricao:"2 MARCADORES FAT MAX",localizacao:"FERRAMENTAS",vendas:19128.36,mrge:4643.93,mrgp:0.2426,topBS:1,img:null},
+{artigo:"18805042",descricao:"ALICATE EXTENS 250MM DEXTER",localizacao:"FERRAMENTAS",vendas:18776.52,mrge:7977.93,mrgp:0.4248,topBS:1,img:null},
+{artigo:"19557545",descricao:"SET 32 PCS MICRO CHAVES FENDA DEXTER",localizacao:"FERRAMENTAS",vendas:18761.48,mrge:8793.37,mrgp:0.4686,topBS:1,img:null},
+{artigo:"87546428",descricao:"MARCADOR DEXTER 12 RECARGAS",localizacao:"FERRAMENTAS",vendas:18618.97,mrge:6730.55,mrgp:0.3615,topBS:1,img:null},
+{artigo:"85326508",descricao:"NIVEL TORPEDO 200MM DEXTER",localizacao:"FERRAMENTAS",vendas:18069.53,mrge:9625.84,mrgp:0.5326,topBS:1,img:null},
+{artigo:"82263626",descricao:"CAIXA 31 CHAVES+PONTAS DEXTER",localizacao:"FERRAMENTAS",vendas:17731.4,mrge:8229.47,mrgp:0.4641,topBS:1,img:null},
+{artigo:"82305121",descricao:"GRAMPO APERTO 300MM DEXTER",localizacao:"FERRAMENTAS",vendas:17632.98,mrge:4946.45,mrgp:0.2805,topBS:1,img:null},
+{artigo:"88035328",descricao:"10 MASCARAS DESCART DOBRAV FFP2 DEXTER",localizacao:"FERRAMENTAS",vendas:17063.32,mrge:7196.29,mrgp:0.4217,topBS:1,img:null},
+{artigo:"89134183",descricao:"KIT 30PCS NIVELADORAS DEXTER",localizacao:"FERRAMENTAS",vendas:16951.56,mrge:5336.95,mrgp:0.3148,topBS:1,img:null},
+{artigo:"84732125",descricao:"ESTOJO 5 BROCAS BETAO TR DEXTER PRO",localizacao:"FERRAMENTAS",vendas:16513.68,mrge:8681.19,mrgp:0.5256,topBS:1,img:null},
+{artigo:"18748789",descricao:"SUPORTE LIXAR 85X165MM",localizacao:"FERRAMENTAS",vendas:14796.57,mrge:8109.77,mrgp:0.5479,topBS:1,img:null},
+{artigo:"82305122",descricao:"GRAMPO APERTO 400MM DEXTER",localizacao:"FERRAMENTAS",vendas:14640.2,mrge:7168.98,mrgp:0.4896,topBS:1,img:null},
+{artigo:"14727783",descricao:"BUSCA-POLOS 190MM",localizacao:"FERRAMENTAS",vendas:14474.66,mrge:10030.56,mrgp:0.693,topBS:1,img:null},
+{artigo:"19563194",descricao:"CONJ. 6 CHAVES FENDAS ISOLADAS DEXTER",localizacao:"FERRAMENTAS",vendas:14442.03,mrge:5219.55,mrgp:0.3614,topBS:1,img:null},
+{artigo:"81968470",descricao:"MACO BORRACHA BRANCO 60MM DEXTER",localizacao:"FERRAMENTAS",vendas:14381.12,mrge:2929.3,mrgp:0.2037,topBS:1,img:null},
+{artigo:"95595181",descricao:"CAIXA ESQUADRIA 285MM DEXT C/SERRA 350MM",localizacao:"FERRAMENTAS",vendas:13891.31,mrge:5300.74,mrgp:0.3815,topBS:1,img:null},
+{artigo:"89193732",descricao:"DESENTUPIDOR 5M D.20MM DEXTER",localizacao:"FERRAMENTAS",vendas:13865.12,mrge:5905.21,mrgp:0.4258,topBS:1,img:null},
+{artigo:"11611285",descricao:"PISTOLA COLAR SALKI 60W 12MM",localizacao:"FERRAMENTAS",vendas:13493.04,mrge:4214.18,mrgp:0.3123,topBS:1,img:null},
+{artigo:"90187326",descricao:"ALICATE MULTIFERRAMENTAS 14 EM 1 DEXTER",localizacao:"FERRAMENTAS",vendas:13398.75,mrge:6619.05,mrgp:0.4939,topBS:1,img:null},
+{artigo:"86236902",descricao:"DEXTER AGRAFADOR MANUAL N53 4-14MM",localizacao:"FERRAMENTAS",vendas:12913.85,mrge:4990.37,mrgp:0.3864,topBS:1,img:null},
+{artigo:"84721325",descricao:"SET 33PCS BROCAS E PONTAS DEXTER",localizacao:"FERRAMENTAS",vendas:11543.63,mrge:6040.98,mrgp:0.5232,topBS:1,img:null},
+{artigo:"85239898",descricao:"KIT ESPATULAS P/JUNTAS - FACIL JOINTS XL",localizacao:"FERRAMENTAS",vendas:11319.53,mrge:3445.6,mrgp:0.3042,topBS:1,img:null},
+{artigo:"88035339",descricao:"PROTETOR AUDIT AJUST ABS/PU DEXTER 32DB",localizacao:"FERRAMENTAS",vendas:10358.2,mrge:4429.47,mrgp:0.4276,topBS:1,img:null},
+{artigo:"13925891",descricao:"ESPATULA DEXTER INOX 6 CM",localizacao:"FERRAMENTAS",vendas:9688.62,mrge:4293.17,mrgp:0.4432,topBS:1,img:null},
+{artigo:"81968472",descricao:"MACO BORRACHA PRT BRNC 60MM DEXTER",localizacao:"FERRAMENTAS",vendas:9340.6,mrge:2237.17,mrgp:0.2395,topBS:1,img:null},
+{artigo:"83684271",descricao:"TESOURA 275MM DEXTER",localizacao:"FERRAMENTAS",vendas:9296.87,mrge:5069.63,mrgp:0.5453,topBS:1,img:null},
+{artigo:"82008013",descricao:"5 EXTRACTORES PARAFUSOS DEXTER",localizacao:"FERRAMENTAS",vendas:9253.66,mrge:4965.97,mrgp:0.5367,topBS:1,img:null},
+{artigo:"82612538",descricao:"CONJ. ROQUETE + 6 CH CAIXA DEXTER",localizacao:"FERRAMENTAS",vendas:9092.79,mrge:4804.87,mrgp:0.5284,topBS:1,img:null},
+{artigo:"82007911",descricao:"4 ADAPT MAGNETICO DEXTER",localizacao:"FERRAMENTAS",vendas:9014.67,mrge:4805.22,mrgp:0.5332,topBS:1,img:null},
+{artigo:"88693499",descricao:"BROCA CRANEANA MULTIPLA 60-95MM DEXTER",localizacao:"FERRAMENTAS",vendas:8683.66,mrge:3320.03,mrgp:0.3823,topBS:1,img:null},
+{artigo:"95595161",descricao:"ARCO SERRA DEXT C/FOLH 300MM P/METAL",localizacao:"FERRAMENTAS",vendas:8504.56,mrge:4854.15,mrgp:0.5707,topBS:1,img:null},
+{artigo:"88035334",descricao:"3 MASCARAS DESCART CONCHA FFP3 DEXTER",localizacao:"FERRAMENTAS",vendas:8216.28,mrge:3534.23,mrgp:0.4302,topBS:1,img:null},
+{artigo:"88035346",descricao:"TAMPAO AURICUL REUT AJUST DEXTER 29DB",localizacao:"FERRAMENTAS",vendas:7826.45,mrge:3381.35,mrgp:0.4323,topBS:1,img:null},
+{artigo:"13925863",descricao:"ESPATULA DEXTER INOX 4 CM",localizacao:"FERRAMENTAS",vendas:7225.52,mrge:3172.1,mrgp:0.439,topBS:1,img:null},
+{artigo:"83684299",descricao:"MINI RASPADOR DEXTER",localizacao:"FERRAMENTAS",vendas:7206.88,mrge:3435.64,mrgp:0.4766,topBS:1,img:null},
+{artigo:"91336786",descricao:"ESCOVA ACO CABO PLASTIC DEXTER 240MM",localizacao:"FERRAMENTAS",vendas:6899.26,mrge:3710.5,mrgp:0.5376,topBS:1,img:null},
+{artigo:"84731350",descricao:"5 BROCAS MULTIMATERIAL 5-10MM DEXTER",localizacao:"FERRAMENTAS",vendas:6803.9,mrge:3417.28,mrgp:0.5024,topBS:1,img:null},
+{artigo:"93372500",descricao:"BUSCA POLOS 12V-250V DEXTER",localizacao:"FERRAMENTAS",vendas:5475.22,mrge:1801.24,mrgp:0.329,topBS:1,img:null},
+{artigo:"90667187",descricao:"CINTO TRABALHO DEXTER AJUSTE UNIVERSAL",localizacao:"FERRAMENTAS",vendas:5471.18,mrge:1784.99,mrgp:0.3262,topBS:1,img:null},
+{artigo:"89124111",descricao:"250 CUNHAS NIVELADORAS DEXTER 5MM",localizacao:"FERRAMENTAS",vendas:5123.94,mrge:1812.38,mrgp:0.3537,topBS:1,img:null},
+{artigo:"95482032",descricao:"CAIXA FERRAMENTAS PLASTICA DEXTER 25PCS",localizacao:"FERRAMENTAS",vendas:4514.71,mrge:1658.95,mrgp:0.3674,topBS:1,img:null},
+{artigo:"81885799",descricao:"ESPONJA ABRASIVA 100X70MM GR180 DEXTER",localizacao:"FERRAMENTAS",vendas:4358.01,mrge:2153.32,mrgp:0.4941,topBS:1,img:null},
+{artigo:"12228853",descricao:"40 BUCHAS EM MADEIRA DE 8X40MM",localizacao:"FERRAMENTAS",vendas:4282.32,mrge:2997.4,mrgp:0.6999,topBS:1,img:null},
+{artigo:"81885791",descricao:"ESPONJA ABRASIVA 100X70MM GR120 DEXTER",localizacao:"FERRAMENTAS",vendas:4279.5,mrge:2454.14,mrgp:0.5735,topBS:1,img:null},
+{artigo:"81885794",descricao:"ESPONJA ABRASIVA MAD RED G120 DEXTER",localizacao:"FERRAMENTAS",vendas:3545.73,mrge:1909.62,mrgp:0.5386,topBS:1,img:null},
+{artigo:"19719973",descricao:"CORTA-TUBOS 3-30MM DEXTER",localizacao:"FERRAMENTAS",vendas:2970.56,mrge:1256.02,mrgp:0.4231,topBS:1,img:null},
+{artigo:"75099443",descricao:"BOLSA TAYG 500 CRUZETAS 2MM",localizacao:"FERRAMENTAS",vendas:769.28,mrge:290.02,mrgp:0.3769,topBS:1,img:null},
+{artigo:"77858273",descricao:"5 SACOS PAPEL REDX P/ASPIRAD DEXTER 30L",localizacao:"FERRAMENTAS",vendas:0,mrge:0,mrgp:0,topBS:0,img:null},
+{artigo:"77858302",descricao:"5 SACOS PAPEL REDX P/ASPIRAD DEXTER 20L",localizacao:"FERRAMENTAS",vendas:0,mrge:0,mrgp:0,topBS:0,img:null}
+]};
+
+// --- STATE ---
+const assignments={ferragens:{},ferramentas:{}};
+const secAssignments={ferragens:[],ferramentas:[]};
+const filters={ferragens:'all',ferramentas:'all'};
+const curCR={ferragens:null,ferramentas:null};
+const crNames={ferragens:{},ferramentas:{}}; // custom CR display names
+
+const STORE_SECS=[
+  {id:'madeiras',     label:'Madeiras',     icon:'🪵'},
+  {id:'eletricidade', label:'Eletricidade',  icon:'⚡'},
+  {id:'canalizacao',  label:'Canalização',   icon:'🔧'},
+  {id:'conforto',     label:'Conforto',      icon:'🛋️'},
+  {id:'ceramica',     label:'Cerâmica',      icon:'🏺'},
+  {id:'sanitarios',   label:'Sanitários',    icon:'🚿'},
+  {id:'cozinhas',     label:'Cozinhas',      icon:'🍳'},
+  {id:'roupeiros',    label:'Roupeiros',     icon:'🚪'},
+  {id:'jardim',       label:'Jardim',        icon:'🌿'},
+  {id:'pintura',      label:'Pintura',       icon:'🎨'},
+  {id:'decoracao',    label:'Decoração',     icon:'🖼️'},
+  {id:'iluminacao',   label:'Iluminação',    icon:'💡'},
+  {id:'linhacaixas',  label:'Linha de Caixas', icon:'🛒'},
+];
+let newImgData=null, addSec='ferragens', xxlTab='ferragens';
+
+// --- HELPERS ---
+function maxV(sec){return Math.max(...DATA[sec].map(a=>a.vendas||0),1);}
+function tier(art,sec){
+  if(!art.topBS)return'normal';
+  const p=(art.vendas||0)/maxV(sec);
+  return p>=0.5?'gold':p>=0.2?'silver':'bronze';
+}
+const TC={gold:{bg:'rgba(240,180,41,.07)',bc:'var(--gold)',badge:'#b7791f',lbl:'🥇 Gold'},
+          silver:{bg:'rgba(168,178,190,.07)',bc:'var(--silver)',badge:'#718096',lbl:'🥈 Silver'},
+          bronze:{bg:'rgba(203,125,46,.07)',bc:'var(--bronze)',badge:'#9c4221',lbl:'🥉 Bronze'},
+          normal:{bg:'',bc:'var(--border)',badge:null,lbl:null}};
+function eur(v){return new Intl.NumberFormat('pt-PT',{style:'currency',currency:'EUR',minimumFractionDigits:0}).format(v||0);}
+function mrgCol(p){return p>=0.5?'#3fb950':p>=0.25?'#e3b341':'#f85149';}
+
+// --- PLANOGRAM BUILDER ---
+const CR_LAYOUT=[
+  {type:'col-a'},
+  {type:'center'},
+  {type:'central'},
+  {type:'far-right'}
+];
+
+function crBlock(sec,id,side){
+  const displayName=crNames[sec]&&crNames[sec][id] ? crNames[sec][id] : id.replace(/b$/,'');
+  const hasCustom=crNames[sec]&&crNames[sec][id];
+  return `<div id="${sec}-${id}" class="cr-block ${side}" onclick="openPanel('${sec}','${id}','${side}')">
+    <div class="cr-id" title="Duplo-clique para renomear" ondblclick="event.stopPropagation();startRenameCR('${sec}','${id}',this)">${displayName}</div>
+    <div class="cr-side-tag" style="${hasCustom?'opacity:.45;':''}${side==='red'?'':''}">
+      ${hasCustom?'<span style="opacity:.5;font-size:5.5px">'+id.replace(/b$/,'')+'</span> ':''}${side==='red'?'Esq':'Dir'}
+    </div>
+    <div class="cr-content"><div class="cr-empty">+ atribuir</div></div>
+  </div>`;
+}
+
+function pair(sec,top,bot){
+  return `<div class="col">${crBlock(sec,top,'red')}${crBlock(sec,bot,'blue')}</div>`;
+}
+
+function buildPlanogram(sec){
+  const o=sec==='ferramentas';
+  const cor=o?'pgram-corridor-full orn':'pgram-corridor-full';
+  const vlColor=o?'color:var(--orange)':'';
+
+
+  // -- Remove topDiv de vers-es anteriores -----------------------
+  const oldTop=document.getElementById(sec+'-cr1024-wrap');
+  if(oldTop) oldTop.remove();
+
+  const colGold = o?'var(--orange)':'var(--gold)';
+  const corBg   = o?'rgba(249,115,22,.08)':'rgba(240,180,41,.08)';
+  const corBd   = o?'rgba(249,115,22,.22)':'rgba(240,180,41,.22)';
+
+  // Corredor horizontal full-width
+  function hCor(lbl){
+    return `<div style="display:flex;align-items:center;gap:4px;margin:2px 0;">
+      <div style="flex:1;height:1px;background:${corBd};"></div>
+      <div style="font-size:7.5px;font-weight:700;color:${colGold};background:${corBg};border:1px solid ${corBd};border-radius:3px;padding:1px 8px;letter-spacing:.5px;white-space:nowrap;">${lbl}</div>
+      <div style="flex:1;height:1px;background:${corBd};"></div>
+    </div>`;
+  }
+
+  // PC SVG
+  const pcSVG=`<div title="Posto de Trabalho" style="width:60px;height:60px;border-radius:6px;overflow:hidden;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,.5);">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="60" height="60">
+      <defs>
+        <radialGradient id="sg${sec}" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#3b82f6" stop-opacity=".6"/><stop offset="100%" stop-color="#1e3a8a" stop-opacity=".1"/></radialGradient>
+        <filter id="ss${sec}"><feDropShadow dx="0" dy="1" stdDeviation="1.5" flood-color="#000" flood-opacity=".4"/></filter>
+      </defs>
+      <rect width="96" height="96" fill="#0f1923"/>
+      <rect x="6" y="32" width="84" height="56" rx="4" fill="#1c2f44"/>
+      <rect x="6" y="32" width="84" height="3" rx="1" fill="#2a4a6a"/>
+      <rect x="18" y="38" width="54" height="22" rx="3" fill="#0d1117" filter="url(#ss${sec})"/>
+      <rect x="20" y="40" width="50" height="18" rx="2" fill="url(#sg${sec})"/>
+      <rect x="22" y="43" width="20" height="2" rx="1" fill="#60a5fa" opacity=".9"/>
+      <rect x="22" y="47" width="14" height="1.5" rx="1" fill="#93c5fd" opacity=".65"/>
+      <rect x="22" y="50" width="18" height="1.5" rx="1" fill="#93c5fd" opacity=".55"/>
+      <rect x="44" y="43" width="24" height="13" rx="1.5" fill="#1d4ed8" opacity=".35"/>
+      <rect x="42" y="60" width="12" height="3" rx="1" fill="#162d4a"/>
+      <rect x="38" y="63" width="20" height="2" rx="1" fill="#0f1e2e"/>
+      <rect x="20" y="68" width="46" height="13" rx="2" fill="#162d4a" stroke="#243a54" stroke-width=".8"/>
+      <rect x="22" y="70" width="42" height="2" rx=".8" fill="#1f3550"/>
+      <rect x="22" y="73.5" width="42" height="2" rx=".8" fill="#1f3550"/>
+      <rect x="22" y="77" width="30" height="2" rx=".8" fill="#1f3550"/>
+      <rect x="31" y="79.5" width="18" height="1.5" rx=".8" fill="#1f3550"/>
+      <ellipse cx="76" cy="74" rx="6" ry="8" fill="#162d4a" stroke="#243a54" stroke-width=".8"/>
+      <line x1="76" y1="67" x2="76" y2="73" stroke="#243a54" stroke-width=".8"/>
+      <ellipse cx="48" cy="20" rx="13" ry="10" fill="#000" opacity=".25"/>
+      <ellipse cx="48" cy="22" rx="11" ry="8" fill="#2563eb"/>
+      <ellipse cx="48" cy="14.5" rx="3.5" ry="3" fill="#f5c6a0"/>
+      <circle cx="48" cy="10" r="7" fill="#f5c6a0" stroke="#e8a87c" stroke-width=".8"/>
+      <path d="M41.5 7 Q48 2 54.5 7 Q54 3.5 48 3 Q42 3.5 41.5 7Z" fill="#3b2a1a"/>
+      <path d="M37 24 Q30 30 32 68" stroke="#f5c6a0" stroke-width="5" stroke-linecap="round" fill="none"/>
+      <path d="M37 24 Q30 30 32 68" stroke="#2563eb" stroke-width="6.5" stroke-linecap="round" fill="none" opacity=".5"/>
+      <path d="M59 24 Q66 30 64 68" stroke="#f5c6a0" stroke-width="5" stroke-linecap="round" fill="none"/>
+      <path d="M59 24 Q66 30 64 68" stroke="#2563eb" stroke-width="6.5" stroke-linecap="round" fill="none" opacity=".5"/>
+      <circle cx="32" cy="68" r="4" fill="#f5c6a0"/>
+      <circle cx="64" cy="68" r="4" fill="#f5c6a0"/>
+      <text x="48" y="94" text-anchor="middle" font-size="5.5" font-family="Barlow,sans-serif" font-weight="700" fill="#7d8590" letter-spacing=".5">POSTO PC</text>
+    </svg>
+  </div>`;
+
+  // Helper: linha horizontal de CRs [colA] [center] [central]
+  function lineL(colA, center, central){
+    return `<div style="display:flex;align-items:flex-start;gap:4px;">
+      <div style="display:flex;flex-direction:column;gap:3px;flex-shrink:0;">${colA}</div>
+      <div style="flex:1;display:flex;justify-content:center;gap:5px;">${center}</div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:3px;flex-shrink:0;">${central}</div>
+    </div>`;
+  }
+
+
+  // PAINEL ESQUERDO:
+  // Linha 0: CR1024 Esq (colA) + vazio (center) + CR1024C Dir (central)
+  // CORREDOR CLIENTES (novo)
+  // Linha 1: CR1032/1031 (colA) + CR1023/1022 + CR1021/1020 (center) + PC (central)
+  // CORREDOR CLIENTES
+  // ... restantes linhas
+
+  const leftPanel=`<div style="flex:1;display:flex;flex-direction:column;min-width:0;gap:0;">
+    <div style="display:flex;align-items:flex-start;gap:4px;">
+      <div style="display:flex;flex-direction:column;gap:3px;flex-shrink:0;visibility:hidden;">${crBlock(sec,'_ph','red')}</div>
+      <div style="flex:1;display:flex;justify-content:center;gap:5px;">
+        <div style="display:flex;flex-direction:column;gap:3px;opacity:0;pointer-events:none;">${crBlock(sec,'_ph2','red')}</div>
+        <div style="display:flex;flex-direction:column;gap:3px;">
+          <div id="${sec}-CR1024" class="cr-block red" onclick="openPanel('${sec}','CR1024','red')">
+            <div class="cr-id">CR1024</div><div class="cr-side-tag">Esq</div>
+            <div class="cr-content"><div class="cr-empty">+ atribuir</div></div>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:3px;flex-shrink:0;">
+        <div id="${sec}-CR1024C" class="cr-block blue" onclick="openPanel('${sec}','CR1024C','blue')">
+          <div class="cr-id">CR1024C</div><div class="cr-side-tag">Dir</div>
+          <div class="cr-content"><div class="cr-empty">+ atribuir</div></div>
+        </div>
+      </div>
+    </div>
+    ${hCor('── CORREDOR CLIENTES ──')}
+    ${lineL(
+        crBlock(sec,'CR1032','red')+crBlock(sec,'CR1031','blue'),
+        pair(sec,'CR1023','CR1022')+pair(sec,'CR1021','CR1020'),
+        pcSVG
+    )}
+    ${hCor('── CORREDOR CLIENTES ──')}
+    ${lineL(
+        crBlock(sec,'CR1030','red')+crBlock(sec,'CR1029','blue'),
+        pair(sec,'CR1019','CR1016')+pair(sec,'CR1017','CR1016b'),
+        crBlock(sec,'CR1015','red')+crBlock(sec,'CR1014','blue')
+    )}
+    ${hCor('── CORREDOR CLIENTES ──')}
+    ${lineL(
+        crBlock(sec,'CR1028','red')+crBlock(sec,'CR1027','blue'),
+        pair(sec,'CR1013','CR1012')+pair(sec,'CR1011','CR1010'),
+        crBlock(sec,'CR09','red')+crBlock(sec,'CR08','blue')
+    )}
+    ${hCor('── CORREDOR CLIENTES ──')}
+    ${lineL(
+        crBlock(sec,'CR1026','red')+crBlock(sec,'CR1025','blue'),
+        crBlock(sec,'CR101','blue'),
+        crBlock(sec,'CR103','red')+crBlock(sec,'CR102','blue')
+    )}
+    <div style="height:3px;"></div>
+    ${lineL(
+        crBlock(sec,'CR1024b','red')+crBlock(sec,'CR1023b','blue'),
+        '',
+        crBlock(sec,'CR1023C','red')
+    )}
+  </div>`;
+
+  // CORREDOR CENTRAL e FAR RIGHT - s- em Ferragens
+  const corCentral= o ? '' : `
+    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:0 3px;align-self:stretch;flex-shrink:0;">
+      <div style="flex:1;width:1px;background:${corBd};"></div>
+      <div style="writing-mode:vertical-rl;transform:rotate(180deg);font-size:7px;font-weight:800;color:${colGold};letter-spacing:1.5px;white-space:nowrap;background:${corBg};border:1px solid ${corBd};border-radius:3px;padding:5px 2px;text-align:center;">── CORREDOR CENTRAL ──</div>
+      <div style="font-size:20px;color:${colGold};line-height:1;">↑</div>
+      <div style="font-size:6px;font-weight:700;color:${colGold};letter-spacing:.5px;opacity:.75;text-align:center;">SENT.<br>CLI.</div>
+      <div style="flex:1;width:1px;background:${corBd};"></div>
+    </div>`;
+
+  const rightPanel= o ? '' : `
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;flex-shrink:0;">
+      ${crBlock(sec,'CR1036','blue')}
+      <div style="height:2px;"></div>
+      ${crBlock(sec,'CR1035','red')}${crBlock(sec,'CR1034','blue')}
+      <div style="height:2px;"></div>
+      ${crBlock(sec,'CR1033','red')}
+    </div>`;
+
+  const html=`
+    <div style="display:flex;align-items:flex-start;gap:4px;min-width:600px;">
+      <div class="vert-label" style="${vlColor}">GRELHAS TRASEIRAS</div>
+      ${leftPanel}
+      ${corCentral}
+      ${rightPanel}
+    </div>`;
+
+  document.getElementById('pgram-'+sec).innerHTML=html;
+}
+
+// --- TABS ---
+function switchTab(tab){
+  document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(e=>e.classList.remove('active'));
+  document.getElementById('content-'+tab).classList.add('active');
+  document.getElementById('tab-'+tab).classList.add('active');
+}
+
+// --- PANEL ---
+function openPanel(sec,crId,side){
+  curCR[sec]=crId;
+  const titleEl=document.getElementById('ptitle-'+sec);
+  titleEl.innerHTML=`${crId} <span class="panel-cr-side" style="background:${side==='red'?'#e53e3e':'#2b6cb0'}">${side==='red'?'Esquerda':'Direita'}</span>`;
+  refreshAssigned(sec);
+  renderList(sec);
+  document.getElementById('panel-'+sec).classList.add('open');
+  document.querySelectorAll('#content-'+sec+' .cr-block').forEach(e=>e.classList.remove('selected'));
+  const el=document.getElementById(sec+'-'+crId);
+  if(el)el.classList.add('selected');
+}
+// --- RENAME CR ---
+function startRenameCR(sec,crId,el){
+  const cur=crNames[sec][crId]||crId.replace(/b$/,'');
+  el.innerHTML='';
+  const inp=document.createElement('input');
+  inp.type='text';
+  inp.value=cur;
+  inp.style.cssText='width:100%;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.5);border-radius:3px;padding:1px 3px;color:#fff;font-size:9px;font-family:"Barlow Condensed",sans-serif;font-weight:800;outline:none;min-width:0;';
+  inp.onclick=e=>e.stopPropagation();
+  inp.onkeydown=e=>{
+    if(e.key==='Enter'){saveRenameCR(sec,crId,inp.value.trim());e.stopPropagation();}
+    if(e.key==='Escape'){buildPlanogram(sec);['ferragens','ferramentas'].forEach(s=>Object.keys(assignments[s]).forEach(c=>renderCR(s,c)));}
+    e.stopPropagation();
+  };
+  inp.onblur=()=>saveRenameCR(sec,crId,inp.value.trim());
+  el.appendChild(inp);
+  inp.focus();inp.select();
+}
+function saveRenameCR(sec,crId,val){
+  if(val&&val!==crId.replace(/b$/,'')) crNames[sec][crId]=val;
+  else delete crNames[sec][crId];
+  buildPlanogram(sec);
+  Object.keys(assignments[sec]).forEach(c=>renderCR(sec,c));
+  markUnsaved();
+}
+
+function closePanel(sec){
+  document.getElementById('panel-'+sec).classList.remove('open');
+  document.querySelectorAll('#content-'+sec+' .cr-block').forEach(e=>e.classList.remove('selected'));
+  curCR[sec]=null;
+}
+
+function refreshAssigned(sec){
+  const crId=curCR[sec];
+  const list=assignments[sec][crId]||[];
+  const el=document.getElementById('passigned-'+sec);
+  if(!list.length){el.style.display='none';return;}
+  el.style.display='flex';el.style.flexDirection='column';el.style.gap='4px';
+  el.innerHTML=list.map((item,i)=>{
+    const artSec=item.srcSec||sec;
+    const art=DATA[artSec][item.artIdx];
+    const img=item.img||art.img;
+    const locDisplay=item.loc||null;
+    const corredorDisplay=item.corredor?`<div style="font-size:8px;color:#f59e0b;margin-top:2px;">🔢 Corredor ${item.corredor}</div>`:'';
+    const secDisplay=item.secLoja ? item.secLoja.split('|').map(sid=>{
+      const s=STORE_SECS.find(x=>x.id===sid);
+      return s?`<span style="font-size:8px;background:#7c3aed22;color:#a78bfa;border:1px solid #7c3aed44;border-radius:3px;padding:1px 4px;">${s.icon} ${s.label}</span>`:'';
+    }).join('') : '';
+    return `<div class="assigned-item">
+      ${img?`<img class="assigned-thumb" src="${img}">`:`<div class="assigned-thumb" style="display:flex;align-items:center;justify-content:center;font-size:16px">📦</div>`}
+      <div class="assigned-info">
+        <div class="assigned-desc">${item.xxl?'<span style="color:#a78bfa;font-size:9px">XXL</span> ':''}${art.descricao}</div>
+        <div class="assigned-ref">#${art.artigo} · Mrg: ${(art.mrgp*100).toFixed(1)}%</div>
+        ${locDisplay?`<div style="font-size:8px;color:#58a6ff;margin-top:2px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:140px;" title="${locDisplay}">📍 ${locDisplay}</div>`:''}
+        ${corredorDisplay}
+        ${secDisplay?`<div style="display:flex;flex-wrap:wrap;gap:2px;margin-top:2px;">${secDisplay}</div>`:''}
+      </div>
+      <button class="btn-remove" onclick="removeItem('${sec}','${crId}',${i})">✕</button>
+    </div>`;
+  }).join('');
+}
+
+function removeItem(sec,crId,i){
+  (assignments[sec][crId]||[]).splice(i,1);
+  refreshAssigned(sec);
+  renderCR(sec,crId);
+  renderList(sec); // refresh placed colour
+  updateStats();
+  markUnsaved();
+  if(document.getElementById('locModal').classList.contains('open'))renderLocView();
+}
+
+// --- FILTER ---
+const listSrc={ferragens:'ferragens',ferramentas:'ferramentas'};
+
+function setListSrc(sec,src){
+  listSrc[sec]=src;
+  ['ferragens','ferramentas'].forEach(s=>{
+    const el=document.getElementById(sec+'-src-'+s);
+    if(el)el.classList.toggle('active',s===src);
+  });
+  renderList(sec);
+}
+
+function setFilter(sec,f){
+  filters[sec]=f;
+  ['all','topbs','loc'].forEach(k=>{
+    const el=document.getElementById(sec+'-f-'+k);
+    if(el)el.classList.toggle('active',k===f);
+  });
+  renderList(sec);
+}
+
+// --- ARTICLE LIST ---
+// Returns list of {sec, crId} where this artIdx is placed across ALL sections
+function getPlacedIn(sec, artIdx){
+  const placed=[];
+  Object.entries(assignments[sec]).forEach(([crId,list])=>{
+    if((list||[]).some(it=>it.artIdx===artIdx)) placed.push(crId);
+  });
+  return placed;
+}
+function getPlacedInSrc(sec, src, artIdx){
+  const placed=[];
+  Object.entries(assignments[sec]).forEach(([crId,list])=>{
+    if((list||[]).some(it=>it.artIdx===artIdx&&(it.srcSec||sec)===src)) placed.push(crId);
+  });
+  return placed;
+}
+
+function renderList(sec){
+  const src=listSrc[sec]||sec;  // source section for articles
+  const q=(document.getElementById('psearch-'+sec).value||'').toLowerCase();
+  const f=filters[sec];
+  const locKey=src==='ferragens'?'FERRAGENS':'FERRAMENTAS';
+  const body=document.getElementById('pbody-'+sec);
+  const isCross=(src!==sec);
+  const srcLabel=isCross?(src==='ferragens'?'🔩':'🔨'):'';
+  const items=DATA[src].map((a,i)=>({...a,_i:i,_src:src})).filter(a=>{
+    const ms=!q||a.descricao.toLowerCase().includes(q)||a.artigo.includes(q);
+    const mf=f==='all'?true:f==='topbs'?a.topBS===1:(a.localizacao||'').includes(locKey);
+    return ms&&mf;
+  });
+  if(!items.length){body.innerHTML='<div style="text-align:center;color:var(--muted);padding:24px;font-size:12px">Nenhum artigo encontrado</div>';return;}
+  body.innerHTML=items.map(art=>{
+    const t=tier(art,src),tc=TC[t];
+    const bs=tc.badge?`<span class="art-bs-badge" style="background:${tc.badge};color:#fff">${tc.lbl}</span>`:'';
+    const placedCRs=getPlacedInSrc(sec,src,art._i);
+    const isPlaced=placedCRs.length>0;
+    const placedStyle=isPlaced
+      ?'border-color:#16a34a!important;background:rgba(22,163,74,.13)!important;'
+      :`border-color:${tc.bc};background:${tc.bg};`;
+    const placedRow='';
+    const hasImg=!!(art.img);
+    const imgArea=hasImg
+      ?`<div style="position:relative;cursor:pointer;" onclick="triggerImgPick('${src}',${art._i})">
+          <img class="art-thumb" src="${art.img}" style="opacity:1;">
+          <div style="position:absolute;inset:0;background:rgba(0,0,0,0);border-radius:4px;display:flex;align-items:center;justify-content:center;gap:4px;opacity:0;transition:opacity .15s" onmouseover="this.style.opacity=1;this.style.background='rgba(0,0,0,.55)'" onmouseout="this.style.opacity=0;this.style.background='rgba(0,0,0,0)'">
+            <span style="font-size:16px;color:#fff">✏️</span>
+          </div>
+          ${isPlaced?'<div style="position:absolute;top:0;right:0;background:#16a34a;border-radius:50%;width:14px;height:14px;display:flex;align-items:center;justify-content:center;font-size:9px">✔</div>':''}
+        </div>`
+      :`<div style="position:relative;">
+          <div class="art-thumb-ph" onclick="triggerImgPick('${src}',${art._i})" style="cursor:pointer;border:1.5px dashed var(--border);opacity:.7;transition:opacity .15s" onmouseover="this.style.opacity=1;this.style.borderColor='var(--accent)'" onmouseout="this.style.opacity=.7;this.style.borderColor='var(--border)'">📷</div>
+          ${isPlaced?'<div style="position:absolute;top:0;right:0;background:#16a34a;border-radius:50%;width:14px;height:14px;display:flex;align-items:center;justify-content:center;font-size:9px">✔</div>':''}
+        </div>`;
+    return `<div class="art-card ${t}" style="${placedStyle}">
+      <input type="file" accept="image/*" id="img-input-${src}-${art._i}" style="display:none" onchange="applyArtImg('${src}',${art._i},this)">
+      ${imgArea}
+      <div class="art-info">
+        ${isCross?`<div style="font-size:8px;font-weight:800;color:${src==='ferragens'?'var(--accent)':'var(--orange)'};margin-bottom:2px;">${srcLabel} ${src==='ferragens'?'Ferragens':'Ferramentas'}</div>`:''}
+        ${bs}
+        <div class="art-desc">${art.descricao}</div>
+        <div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap;">
+          <div class="art-ref">#${art.artigo}</div>
+          ${art.url
+            ?`<a href="${art.url}" target="_blank" onclick="event.stopPropagation()" title="Abrir no site" style="font-size:9px;color:#58a6ff;background:rgba(88,166,255,.12);border:1px solid rgba(88,166,255,.3);border-radius:3px;padding:1px 5px;text-decoration:none;white-space:nowrap;">🔗 Site</a>
+               <button onclick="editArtUrl('${src}',${art._i},event)" title="Editar link" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:9px;padding:0 2px;">✏️</button>`
+            :`<button onclick="editArtUrl('${src}',${art._i},event)" title="Adicionar link" style="font-size:9px;color:var(--muted);background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:3px;padding:1px 5px;cursor:pointer;white-space:nowrap;">+ link</button>`
+          }
+        </div>
+        <div class="art-loc">${(()=>{
+          const locs=(art.localizacao||'').split('|').map(l=>l.trim()).filter(Boolean);
+          if(!locs.length) return '📍 —';
+          if(locs.length===1) return '📍 '+locs[0];
+          return locs.map(l=>`<span style="display:inline-flex;align-items:center;gap:3px;background:rgba(88,166,255,.12);border:1px solid rgba(88,166,255,.25);border-radius:3px;padding:1px 5px;margin:1px 2px 1px 0;font-size:9px;color:#58a6ff;">📍 ${l}</span>`).join('');
+        })()}</div>
+        <div class="art-stats">
+          <span class="stat" style="color:${mrgCol(art.mrgp)}">Mrg: ${(art.mrgp*100).toFixed(1)}%</span>
+          <span class="stat" style="color:#58a6ff">${eur(art.mrge)}</span>
+        </div>
+        ${placedCRs.length||secAssignments[sec].some(x=>x.artIdx===art._i&&(x.srcSec||sec)===src)?`<div style="display:flex;gap:3px;flex-wrap:wrap;margin-top:3px;">
+          ${placedCRs.map(crId=>{
+            const item=(assignments[sec][crId]||[]).find(x=>x.artIdx===art._i&&(x.srcSec||sec)===src);
+            const locTag=item&&item.loc?` <span style="font-size:7px;opacity:.75">· ${item.loc}</span>`:'';
+            const corrTag=item&&item.corredor?` <span style="font-size:7px;color:#f59e0b">🔢${item.corredor}</span>`:'';
+            const xxlTag=item&&item.xxl?` <span style="font-size:7px;background:var(--purple);border-radius:2px;padding:0 2px">XXL</span>`:'';
+            return `<span style="font-size:8px;font-weight:700;background:#16a34a22;color:#16a34a;border:1px solid #16a34a55;border-radius:3px;padding:1px 5px;display:flex;align-items:center;gap:2px;">✔ ${crId}${xxlTag}${locTag}${corrTag}</span>`;
+          }).join('')}
+          ${secAssignments[sec].filter(x=>x.artIdx===art._i&&(x.srcSec||sec)===src).map(x=>{
+            const sids=(x.secLoja||'').split('|').filter(Boolean);
+            return sids.map(sid=>{const s=STORE_SECS.find(z=>z.id===sid);return s?`<span style="font-size:8px;font-weight:700;background:#7c3aed22;color:#a78bfa;border:1px solid #7c3aed44;border-radius:3px;padding:1px 4px;">📌 ${s.icon} ${s.label}</span>`:'';}).join('');
+          }).join('')}
+        </div>`:''}
+        ${placedRow}
+      </div>
+      <div class="art-actions">
+        <button class="btn-assign" style="background:var(--accent);color:#fff" onclick="addToCR('${sec}',${art._i},false,event,'${src}')">+ Normal</button>
+        <button class="btn-assign" style="background:var(--purple);color:#fff" onclick="addToCR('${sec}',${art._i},true,event,'${src}')">+ XXL</button>
+        <button class="btn-assign" style="background:#0d9488;color:#fff" onclick="openLocPicker('${sec}',${art._i},event,'${src}')">📍 Loc</button>
+        ${hasImg?`<button class="btn-assign" style="background:#7d8590;color:#fff;font-size:9px" onclick="removeArtImg('${src}',${art._i},event)">🗑 Img</button>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// --- ARTICLE IMAGE ---
+function triggerImgPick(sec,artIdx){
+  const inp=document.getElementById('img-input-'+sec+'-'+artIdx);
+  if(inp)inp.click();
+}
+function applyArtImg(sec,artIdx,input){
+  const file=input.files[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    DATA[sec][artIdx].img=e.target.result;
+    // Also update any existing assignments that use this article
+    Object.values(assignments[sec]).forEach(list=>{
+      list.forEach(item=>{if(item.artIdx===artIdx&&!item.img)item.img=e.target.result;});
+    });
+    renderList(sec);
+    markUnsaved();
+  };
+  reader.readAsDataURL(file);
+}
+function removeArtImg(sec,artIdx,e){
+  if(e)e.stopPropagation();
+  DATA[sec][artIdx].img=null;
+  renderList(sec);
+  markUnsaved();
+}
+
+// --- ARTICLE URL ---
+function editArtUrl(sec,artIdx,e){
+  if(e)e.stopPropagation();
+  const art=DATA[sec][artIdx];
+  const cur=art.url||'';
+  // Remove existing popup if any
+  document.querySelectorAll('.url-popup').forEach(el=>el.remove());
+  const btn=e.target;
+  const popup=document.createElement('div');
+  popup.className='url-popup';
+  popup.style.cssText='position:fixed;z-index:9999;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;box-shadow:0 8px 24px rgba(0,0,0,.6);min-width:280px;';
+  popup.innerHTML=`
+    <div style="font-size:10px;font-weight:700;color:var(--text);margin-bottom:6px;">🔗 Link do artigo · #${art.artigo}</div>
+    <input id="url-input-${sec}-${artIdx}" type="url" value="${cur}" placeholder="https://www.leroymerlin.pt/..." onclick="event.stopPropagation()"
+      style="width:100%;background:var(--dark);border:1px solid var(--border);border-radius:5px;padding:5px 8px;color:var(--text);font-size:10px;outline:none;box-sizing:border-box;font-family:'Barlow',sans-serif;">
+    <div style="display:flex;gap:6px;margin-top:8px;">
+      <button onclick="saveArtUrl('${sec}',${artIdx})" style="flex:1;background:#1d4ed8;color:#fff;border:none;border-radius:5px;padding:5px;font-weight:700;font-size:10px;cursor:pointer;">✔ Guardar</button>
+      ${cur?`<button onclick="clearArtUrl('${sec}',${artIdx})" style="background:#7f1d1d;color:#fca5a5;border:none;border-radius:5px;padding:5px 8px;font-weight:700;font-size:10px;cursor:pointer;">🗑</button>`:''}
+      <button onclick="document.querySelectorAll('.url-popup').forEach(el=>el.remove())" style="background:var(--surface);color:var(--muted);border:1px solid var(--border);border-radius:5px;padding:5px 8px;font-weight:700;font-size:10px;cursor:pointer;">✕</button>
+    </div>`;
+  // Position near button
+  const rect=btn.getBoundingClientRect();
+  popup.style.top=(rect.bottom+6)+'px';
+  popup.style.left=Math.min(rect.left,window.innerWidth-300)+'px';
+  document.body.appendChild(popup);
+  popup.querySelector('input').focus();
+  popup.querySelector('input').select();
+  // Close on outside click
+  setTimeout(()=>document.addEventListener('click',function h(ev){
+    if(!popup.contains(ev.target)){popup.remove();document.removeEventListener('click',h);}
+  }),50);
+}
+function saveArtUrl(sec,artIdx){
+  const inp=document.getElementById('url-input-'+sec+'-'+artIdx);
+  if(!inp)return;
+  DATA[sec][artIdx].url=inp.value.trim()||null;
+  document.querySelectorAll('.url-popup').forEach(el=>el.remove());
+  renderList(sec);
+  markUnsaved();
+}
+function clearArtUrl(sec,artIdx){
+  DATA[sec][artIdx].url=null;
+  document.querySelectorAll('.url-popup').forEach(el=>el.remove());
+  renderList(sec);
+  markUnsaved();
+}
+
+// --- ASSIGN ---
+function addToCR(sec,artIdx,xxl,e,srcSec){
+  if(e)e.stopPropagation();
+  srcSec=srcSec||sec;
+  const crId=curCR[sec];
+  if(!crId)return;
+  if(!assignments[sec][crId])assignments[sec][crId]=[];
+  const art=DATA[srcSec][artIdx];
+  assignments[sec][crId].push({artIdx,xxl,img:art.img||null,loc:'',srcSec:srcSec===sec?undefined:srcSec});
+  refreshAssigned(sec);
+  renderCR(sec,crId);
+  renderList(sec);
+  updateStats();
+  markUnsaved();
+  if(e){const b=e.target,orig=b.textContent;b.textContent='✓';setTimeout(()=>{b.textContent=orig;},600);}
+  if(document.getElementById('locModal').classList.contains('open'))renderLocView();
+}
+
+// --- RENDER CR BLOCK ---
+function renderCR(sec,crId){
+  const el=document.getElementById(sec+'-'+crId);
+  if(!el)return;
+  const list=assignments[sec][crId]||[];
+  const cd=el.querySelector('.cr-content');
+  if(!list.length){cd.innerHTML='<div class="cr-empty">+ atribuir</div>';return;}
+  const normals=list.filter(it=>!it.xxl);
+  const xxls=list.filter(it=>it.xxl);
+  let h='<div class="cr-arts-list">';
+  normals.slice(0,3).forEach(item=>{
+    const artSec=item.srcSec||sec;
+    const art=DATA[artSec][item.artIdx];
+    const t=tier(art,artSec),tc=TC[t];
+    const img=item.img||art.img;
+    const mc=mrgCol(art.mrgp);
+    const globalIdx=list.indexOf(item);
+    const allLocs=item.loc ? item.loc.split('|').map(l=>l.trim()).filter(Boolean) : [];
+    const secBadges=item.secLoja ? item.secLoja.split('|').map(sid=>{
+      const s=STORE_SECS.find(x=>x.id===sid);
+      return s?`<span style="font-size:5.5px;font-weight:800;color:#fff;background:#7c3aed;border-radius:2px;padding:0 2px;margin-top:1px;display:inline-block;">${s.icon} ${s.label}</span>`:'';
+    }).join('') : '';
+    const locBadges=allLocs.length
+      ? allLocs.map(l=>`<span class="cr-loc-badge">📍 ${l}</span>`).join('')+secBadges
+      : secBadges;
+    const srcBadge=item.srcSec?`<span style="font-size:6px;font-weight:800;color:${item.srcSec==='ferragens'?'#3b82f6':'#f97316'};opacity:.9">${item.srcSec==='ferragens'?'🔩':'🔨'}</span>`:'';
+    h+=`<div class="cr-art-item">
+      <button class="btn-rm-art" onclick="event.stopPropagation();removeItem('${sec}','${crId}',${globalIdx})">✕</button>
+      ${img?`<img src="${img}">`:'<div class="cr-art-img-ph">📦</div>'}
+      <div class="art-name">${srcBadge} ${art.descricao}</div>
+      <div class="art-code">#${art.artigo}</div>
+      ${locBadges}
+      <div class="art-badges">
+        <span class="badge-mrg" style="background:${mc}20;color:${mc}">${(art.mrgp*100).toFixed(0)}%</span>
+        ${tc.badge?`<span class="badge-bs" style="background:${tc.badge}">${tc.lbl}</span>`:''}
+      </div>
+    </div>`;
+  });
+  if(normals.length>3)h+=`<div style="font-size:7px;color:rgba(255,255,255,.5);text-align:center;padding:1px">+${normals.length-3} mais</div>`;
+  h+='</div>';
+  if(xxls.length)h+=`<div style="font-size:7px;background:rgba(139,92,246,.25);border:1px solid rgba(139,92,246,.4);border-radius:3px;padding:1px 4px;margin-top:2px;color:#a78bfa;font-weight:700">XXL: ${xxls.length} artigo${xxls.length>1?'s':''}</div>`;
+  cd.innerHTML=h;
+}
+
+// --- PRINT A3 ---
+function printA3(){
+  // Mark active tab content for print
+  document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('print-active'));
+  const activeTab=document.querySelector('.tab-content.active');
+  if(activeTab) activeTab.classList.add('print-active');
+
+  // Fill print header
+  const secName=activeTab&&activeTab.id.includes('ferramentas')?'🔨 Ferramentas':'🔩 Ferragens';
+  document.getElementById('printSubtitle').textContent='Planograma · '+secName;
+  document.getElementById('printDate').textContent='Impresso em '+new Date().toLocaleDateString('pt-PT',{day:'2-digit',month:'long',year:'numeric'});
+  document.getElementById('printHeader').style.display='block';
+
+  // Auto-scale planogram to fit A3 width
+  const pgram=activeTab?activeTab.querySelector('.planogram'):null;
+  let scaleStyle='';
+  if(pgram){
+    const naturalW=pgram.scrollWidth;
+    const a3w=1050; // ~A3 landscape printable width in px at 96dpi (297mm - margins)
+    if(naturalW>a3w){
+      const scale=(a3w/naturalW).toFixed(3);
+      pgram.style.transform=`scale(${scale})`;
+      pgram.style.transformOrigin='top left';
+      pgram.parentElement.style.height=(pgram.scrollHeight*parseFloat(scale))+'px';
+      scaleStyle=scale;
+    }
+  }
+
+  window.print();
+
+  // Restore after print
+  setTimeout(()=>{
+    document.getElementById('printHeader').style.display='none';
+    if(pgram&&scaleStyle){
+      pgram.style.transform='';
+      pgram.parentElement.style.height='';
+    }
+  },1500);
+}
+
+// --- SEC ADD MODAL (artigo em sec--o sem CR) ---
+let _secAddSrc='ferragens', _secAddArtIdx=null, _secAddSecs=new Set(), _secAddTargetSec='ferragens';
+
+function openSecAddModal(){
+  _secAddSrc=locTab; _secAddTargetSec=locTab;
+  _secAddArtIdx=null; _secAddSecs=new Set();
+  document.getElementById('secAddSearch').value='';
+  document.getElementById('secAddCorredor').value='';
+  document.getElementById('secAddSelected').style.display='none';
+  setSecAddSrc(_secAddSrc);
+  renderSecAddSecs();
+  document.getElementById('secAddModal').classList.add('open');
+}
+function closeSecAddModal(){document.getElementById('secAddModal').classList.remove('open');}
+document.getElementById('secAddModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeSecAddModal();});
+
+function setSecAddSrc(src){
+  _secAddSrc=src; _secAddArtIdx=null;
+  ['ferragens','ferramentas'].forEach(s=>document.getElementById('secAddSrc-'+s).classList.toggle('active',s===src));
+  document.getElementById('secAddSelected').style.display='none';
+  renderSecAddList();
+}
+
+function renderSecAddList(){
+  const q=(document.getElementById('secAddSearch').value||'').toLowerCase();
+  const items=DATA[_secAddSrc].map((a,i)=>({...a,_i:i}))
+    .filter(a=>!q||a.descricao.toLowerCase().includes(q)||a.artigo.includes(q))
+    .slice(0,30);
+  const el=document.getElementById('secAddArtList');
+  if(!items.length){el.innerHTML='<div style="color:var(--muted);font-size:11px;padding:8px;text-align:center">Nenhum artigo</div>';return;}
+  el.innerHTML=items.map(art=>{
+    const sel=_secAddArtIdx===art._i&&_secAddSrc===art._src;
+    return `<button onclick="selectSecAddArt(${art._i})" style="display:flex;align-items:center;gap:8px;background:${_secAddArtIdx===art._i?'rgba(124,58,237,.25)':'var(--surface2)'};border:${_secAddArtIdx===art._i?'1.5px solid #7c3aed':'1px solid var(--border)'};border-radius:6px;padding:6px 10px;cursor:pointer;text-align:left;font-family:'Barlow',sans-serif;width:100%;">
+      <div style="flex:1">
+        <div style="font-size:10.5px;font-weight:700;color:var(--text)">${art.descricao}</div>
+        <div style="font-size:9px;color:var(--muted);font-family:monospace">#${art.artigo}</div>
+      </div>
+      ${_secAddArtIdx===art._i?'<span style="color:#7c3aed;font-size:14px">✔</span>':''}
+    </button>`;
+  }).join('');
+}
+
+function selectSecAddArt(idx){
+  _secAddArtIdx=idx;
+  const art=DATA[_secAddSrc][idx];
+  const el=document.getElementById('secAddSelected');
+  el.style.display='block';
+  el.innerHTML=`<span style="color:#7c3aed">✔ Seleccionado:</span> ${art.descricao} <span style="color:var(--muted);font-size:9px">#${art.artigo}</span>`;
+  renderSecAddList();
+}
+
+function renderSecAddSecs(){
+  const el=document.getElementById('secAddSecs');
+  el.innerHTML=STORE_SECS.map(s=>{
+    const sel=_secAddSecs.has(s.id);
+    return `<button onclick="toggleSecAdd('${s.id}')" style="display:flex;align-items:center;gap:7px;background:${sel?'rgba(124,58,237,.25)':'var(--surface2)'};border:${sel?'1.5px solid #7c3aed':'1px solid var(--border)'};border-radius:7px;padding:7px 9px;cursor:pointer;font-family:'Barlow',sans-serif;transition:all .15s;text-align:left;">
+      <span style="font-size:16px;line-height:1">${s.icon}</span>
+      <span style="font-size:10px;font-weight:700;color:var(--text);flex:1">${s.label}</span>
+      ${sel?'<span style="font-size:11px;color:#7c3aed">✔</span>':''}
+    </button>`;
+  }).join('');
+}
+
+function toggleSecAdd(id){
+  if(_secAddSecs.has(id)) _secAddSecs.delete(id); else _secAddSecs.add(id);
+  renderSecAddSecs();
+}
+
+function confirmSecAdd(){
+  if(_secAddArtIdx===null){alert('Selecciona um artigo primeiro.');return;}
+  if(!_secAddSecs.size){alert('Selecciona pelo menos uma secção.');return;}
+  const sec=_secAddTargetSec;
+  const srcSec=_secAddSrc;
+  const corredor=(document.getElementById('secAddCorredor').value||'').trim();
+  const colaboradora=document.getElementById('secAddColab').value||undefined;
+  const existing=secAssignments[sec].find(x=>x.artIdx===_secAddArtIdx&&(x.srcSec||sec)===srcSec);
+  if(existing){
+    existing.secLoja=[..._secAddSecs].join('|');
+    if(corredor) existing.corredor=corredor;
+  } else {
+    secAssignments[sec].push({
+      artIdx:_secAddArtIdx,
+      secLoja:[..._secAddSecs].join('|'),
+      corredor:corredor||undefined,
+      colaboradora,
+      srcSec:srcSec===sec?undefined:srcSec
+    });
+  }
+  renderList(sec);
+  updateStats();
+  markUnsaved();
+  renderLocView();
+  closeSecAddModal();
+}
+
+// --- LOC TABLE ---
+let locTab='ferragens', locView='byloc';
+
+function openLocModal(){document.getElementById('locModal').classList.add('open');document.getElementById('locSearch').value='';renderLocBySec();}
+function closeLocModal(){document.getElementById('locModal').classList.remove('open');}
+function switchLocTab(tab){
+  locTab=tab;
+  ['ferragens','ferramentas'].forEach(s=>document.getElementById('loctab-'+s).classList.toggle('active',s===tab));
+  renderLocBySec();
+}
+function switchLocView(v){renderLocBySec();}
+function renderLocView(){renderLocBySec();}
+
+// -- Vista "Por Sec--o" -----------------------------------------
+// -- Colaboradoras --
+const COLABORADORAS=['Daniela Oliveira','Elvira Santos','Beatriz Mariani','Carolina Tavares','António Oliveira','Sara Pinheiro'];
+
+// -- Delegated click on loc-body for edit/delete buttons --
+document.getElementById('loc-body').addEventListener('click',function(e){
+  const btn=e.target.closest('[data-action]');
+  if(!btn) return;
+  const sec=btn.dataset.sec;
+  const crId=decodeURIComponent(btn.dataset.cr);
+  const artIdx=parseInt(btn.dataset.idx);
+  const srcSec=decodeURIComponent(btn.dataset.src);
+  if(btn.dataset.action==='edit') editLocEntry(sec,crId,artIdx,srcSec);
+  if(btn.dataset.action==='del') deleteLocEntry(sec,crId,artIdx,srcSec);
+});
+
+// -- Edit / Delete loc entries ----------------------------------
+function deleteLocEntry(sec,crId,artIdx,srcSec){
+  if(!confirm('Remover localização deste artigo? O artigo voltará a estar disponível para atribuição.')) return;
+  if(crId==='—'){
+    // Standalone — remove from secAssignments entirely
+    const idx=secAssignments[sec].findIndex(x=>x.artIdx===artIdx&&(x.srcSec||sec)===srcSec);
+    if(idx>-1) secAssignments[sec].splice(idx,1);
+  } else {
+    // In a CR — clear secLoja, corredor and colaboradora but keep the CR assignment
+    const list=assignments[sec][crId]||[];
+    const item=list.find(x=>x.artIdx===artIdx&&(x.srcSec||sec)===srcSec);
+    if(item){
+      item.secLoja=undefined;
+      item.corredor=undefined;
+      item.colaboradora=undefined;
+      item.loc=undefined;
+    }
+    refreshAssigned(sec);
+    renderCR(sec,crId);
+  }
+  renderList(sec);
+  updateStats();
+  markUnsaved();
+  renderLocBySec();
+}
+
+let _editLocSec,_editLocCrId,_editLocArtIdx,_editLocSrcSec,_editLocSelSecs=new Set();
+
+function editLocEntry(sec,crId,artIdx,srcSec){
+  _editLocSec=sec; _editLocCrId=crId; _editLocArtIdx=artIdx; _editLocSrcSec=srcSec;
+  // Get current item
+  let item;
+  if(crId==='—'){
+    item=secAssignments[sec].find(x=>x.artIdx===artIdx&&(x.srcSec||sec)===srcSec)||{};
+  } else {
+    item=(assignments[sec][crId]||[]).find(x=>x.artIdx===artIdx&&(x.srcSec||sec)===srcSec)||{};
+  }
+  _editLocSelSecs=new Set((item.secLoja||'').split('|').filter(Boolean));
+  const art=DATA[srcSec]?.[artIdx];
+  // Build modal
+  document.getElementById('editLocArtName').textContent=(art?art.descricao+' · #'+art.artigo:'');
+  document.getElementById('editLocCorredor').value=item.corredor||'';
+  const selColab=document.getElementById('editLocColab');
+  if(selColab) selColab.value=item.colaboradora||'';
+  renderEditLocSecs();
+  document.getElementById('editLocModal').classList.add('open');
+}
+
+function renderEditLocSecs(){
+  const el=document.getElementById('editLocSecs');
+  el.innerHTML=STORE_SECS.map(s=>{
+    const sel=_editLocSelSecs.has(s.id);
+    return `<button onclick="toggleEditLocSec('${s.id}')" style="display:flex;align-items:center;gap:7px;background:${sel?'rgba(124,58,237,.25)':'var(--surface2)'};border:${sel?'1.5px solid #7c3aed':'1px solid var(--border)'};border-radius:7px;padding:7px 9px;cursor:pointer;font-family:'Barlow',sans-serif;transition:all .15s;text-align:left;">
+      <span style="font-size:15px;line-height:1">${s.icon}</span>
+      <span style="font-size:10px;font-weight:700;color:var(--text);flex:1">${s.label}</span>
+      ${sel?'<span style="font-size:11px;color:#7c3aed">✔</span>':''}
+    </button>`;
+  }).join('');
+}
+
+function toggleEditLocSec(id){
+  if(_editLocSelSecs.has(id)) _editLocSelSecs.delete(id);
+  else _editLocSelSecs.add(id);
+  renderEditLocSecs();
+}
+
+function saveEditLoc(){
+  const sec=_editLocSec,crId=_editLocCrId,artIdx=_editLocArtIdx,srcSec=_editLocSrcSec;
+  const corredor=document.getElementById('editLocCorredor').value.trim();
+  const colaboradora=document.getElementById('editLocColab').value||undefined;
+  const secLoja=[..._editLocSelSecs].join('|')||undefined;
+  if(crId==='—'){
+    const idx=secAssignments[sec].findIndex(x=>x.artIdx===artIdx&&(x.srcSec||sec)===srcSec);
+    if(idx>-1){secAssignments[sec][idx].secLoja=secLoja;secAssignments[sec][idx].corredor=corredor||undefined;secAssignments[sec][idx].colaboradora=colaboradora;}
+    else secAssignments[sec].push({artIdx,secLoja,corredor:corredor||undefined,colaboradora,srcSec:srcSec===sec?undefined:srcSec});
+  } else {
+    const list=assignments[sec][crId]||[];
+    const item=list.find(x=>x.artIdx===artIdx&&(x.srcSec||sec)===srcSec);
+    if(item){item.secLoja=secLoja;item.corredor=corredor||undefined;item.colaboradora=colaboradora;}
+    refreshAssigned(sec);
+    renderCR(sec,crId);
+  }
+  renderList(sec);
+  updateStats();
+  markUnsaved();
+  document.getElementById('editLocModal').classList.remove('open');
+  renderLocBySec();
+}
+
+
+function renderLocBySec(){
+  const q=(document.getElementById('locSearch').value||'').toLowerCase();
+  const body=document.getElementById('loc-body');
+  const sec=locTab;
+  const col=sec==='ferragens'?'var(--accent)':'var(--orange)';
+
+  // Build secLoja - [{crId, item, art}] map - from CR assignments + standalone
+  const secMap={};
+  const addEntry=(crId,item,art,artSec)=>{
+    const secs=(item.secLoja||'').split('|').filter(Boolean);
+    if(!secs.length){
+      if(!secMap['__none__']) secMap['__none__']=[];
+      secMap['__none__'].push({crId,item,art,artSec});
+    } else {
+      secs.forEach(sid=>{
+        if(!secMap[sid]) secMap[sid]=[];
+        secMap[sid].push({crId,item,art,artSec});
+      });
+    }
+  };
+  Object.entries(assignments[sec]).forEach(([crId,list])=>{
+    (list||[]).forEach(item=>{
+      const artSec=item.srcSec||sec;
+      const art=DATA[artSec]?.[item.artIdx];
+      if(art) addEntry(crId,item,art,artSec);
+    });
+  });
+  // Standalone (no CR)
+  (secAssignments[sec]||[]).forEach(item=>{
+    const artSec=item.srcSec||sec;
+    const art=DATA[artSec]?.[item.artIdx];
+    if(art) addEntry('—',item,art,artSec);
+  });
+
+  const allSecs=[...STORE_SECS.filter(s=>secMap[s.id]),
+    ...(secMap['__none__']?[{id:'__none__',label:'Sem secção definida',icon:'❓'}]:[])
+  ].filter(s=>{
+    if(!q) return true;
+    if(s.label.toLowerCase().includes(q)) return true;
+    return (secMap[s.id]||[]).some(({art})=>art.descricao.toLowerCase().includes(q)||art.artigo.includes(q));
+  });
+
+  if(!allSecs.length){
+    body.innerHTML='<div style="text-align:center;color:var(--muted);padding:40px;font-size:13px">Nenhum artigo atribuído a secções ainda.<br><span style="font-size:11px;opacity:.6">Use o botão 📍 Loc → 🏪 Secções da loja nos artigos.</span></div>';
+    return;
+  }
+
+  const html=allSecs.map(sDef=>{
+    const entries=(secMap[sDef.id]||[]).filter(({art})=>
+      !q||art.descricao.toLowerCase().includes(q)||art.artigo.includes(q)||sDef.label.toLowerCase().includes(q)
+    );
+    if(!entries.length) return '';
+    const rows=entries.map(({crId,item,art,artSec},rowIdx)=>{
+      const crDisplay=crId==='—'?'<span style="color:var(--muted);font-style:italic">Sem CR</span>'
+        :`<span style="font-size:10px;font-weight:700;color:#fff;background:${col};border-radius:4px;padding:2px 6px;">${crNames[sec]&&crNames[sec][crId]?crNames[sec][crId]:crId}</span>`;
+      const corredorTag=item.corredor?`<span style="font-size:9px;color:#f59e0b;font-weight:700;">🔢 ${item.corredor}</span>`:'<span style="color:var(--muted);font-size:9px">—</span>';
+      const xxlTag=item.xxl?'<span style="font-size:9px;background:var(--purple);color:#fff;border-radius:2px;padding:0 3px">XXL</span>':'';
+      const srcTag=item.srcSec?`<span style="font-size:8px;color:${item.srcSec==='ferragens'?'#3b82f6':'#f97316'}">${item.srcSec==='ferragens'?'🔩':'🔨'}</span>`:'';
+      // Build unique IDs to target the item
+      const isStandalone=crId==='—';
+      // encode params safely as data attributes
+      const dSec=sec, dCr=encodeURIComponent(crId), dIdx=item.artIdx, dSrc=encodeURIComponent(item.srcSec||sec);
+      const colabName=item.colaboradora||'';
+      const colabBadge=colabName?`<span style="font-size:8px;background:rgba(236,72,153,.15);color:#f472b6;border:1px solid rgba(236,72,153,.3);border-radius:3px;padding:1px 5px;">👤 ${colabName}</span>`:'';
+      return `<tr style="border-bottom:1px solid rgba(48,54,61,.5)">
+        <td style="padding:5px 8px;">
+          <div style="font-weight:700;font-size:10.5px;color:var(--text)">${srcTag} ${art.descricao}</div>
+          <div style="font-size:9px;color:var(--muted);font-family:monospace">#${art.artigo}</div>
+          ${colabBadge}
+        </td>
+        <td style="padding:5px 8px;width:80px">${crDisplay}</td>
+        <td style="padding:5px 8px;width:100px;font-size:9px">${corredorTag} ${xxlTag}</td>
+        <td style="padding:4px 6px;width:64px;text-align:right;">
+          <div style="display:flex;gap:4px;justify-content:flex-end;">
+            <button data-action="edit" data-sec="${dSec}" data-cr="${dCr}" data-idx="${dIdx}" data-src="${dSrc}" title="Editar"
+              style="background:rgba(59,130,246,.2);color:#60a5fa;border:1px solid rgba(59,130,246,.3);border-radius:4px;padding:4px 8px;font-size:12px;cursor:pointer;">✏️</button>
+            <button data-action="del" data-sec="${dSec}" data-cr="${dCr}" data-idx="${dIdx}" data-src="${dSrc}" title="Apagar"
+              style="background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.3);border-radius:4px;padding:4px 8px;font-size:12px;cursor:pointer;">🗑</button>
+          </div>
+        </td>
+      </tr>`;
+    }).join('');
+
+    const isNone=sDef.id==='__none__';
+    return `<div style="margin-bottom:14px;border:1px solid var(--border);border-radius:10px;overflow:hidden;">
+      <div style="${isNone?'background:var(--surface2)':'background:rgba(124,58,237,.15)'};padding:8px 12px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border);">
+        <span style="font-size:22px;line-height:1">${sDef.icon}</span>
+        <div style="flex:1">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:800;color:var(--text)">${sDef.label}</div>
+          <div style="font-size:9px;color:var(--muted);margin-top:1px">${entries.length} artigo${entries.length!==1?'s':''}</div>
+        </div>
+        <span style="font-size:10px;font-weight:700;color:#a78bfa;background:rgba(124,58,237,.2);border:1px solid rgba(124,58,237,.3);border-radius:4px;padding:2px 8px;">${entries.length} arts</span>
+      </div>
+      <table style="width:100%;border-collapse:collapse;">
+        <thead><tr style="background:var(--dark);">
+          <th style="padding:4px 8px;text-align:left;font-size:9px;color:var(--muted);font-weight:700;text-transform:uppercase;">Artigo</th>
+          <th style="padding:4px 8px;text-align:left;font-size:9px;color:var(--muted);font-weight:700;text-transform:uppercase;width:80px">CR</th>
+          <th style="padding:4px 8px;text-align:left;font-size:9px;color:var(--muted);font-weight:700;text-transform:uppercase;width:100px">Corredor</th>
+          <th style="padding:4px 8px;width:64px"></th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+  }).join('');
+
+  body.innerHTML=html+`<div style="font-size:10px;color:var(--muted);text-align:right;padding:4px 0">${allSecs.length} secção${allSecs.length!==1?'ões':''} com artigos</div>`;
+}
+
+// -- Vista "Por Localiza--o" ------------------------------------
+
+// -- Vista "Por Artigo" (tabela original melhorada) -------------
+
+// --- LOC PICKER ---
+let _locPickerSec=null,_locPickerArtIdx=null,_locPickerBtn=null,_locPickerSrcSec=null;
+let _lpTab='secs',_lpSelSecs=new Set();
+
+function openLocPicker(sec,artIdx,e,srcSec){
+  if(e)e.stopPropagation();
+  _locPickerSec=sec; _locPickerArtIdx=artIdx;
+  _locPickerBtn=e?e.target:null;
+  _locPickerSrcSec=srcSec||sec;
+  const art=DATA[_locPickerSrcSec][artIdx];
+  const crId=curCR[sec];
+  const existing=crId&&(assignments[sec][crId]||[]).find(x=>x.artIdx===artIdx&&(x.srcSec||sec)===_locPickerSrcSec);
+  _lpSelSecs=new Set(existing&&existing.secLoja?existing.secLoja.split('|'):[]);
+  // Set corredor field
+  const inp=document.getElementById('lpCorredorInput');
+  if(inp){inp.value=existing&&existing.corredor||'';updateCorredorPreview();}
+  // Open on secs tab
+  switchLPTab('secs');
+  document.getElementById('locPickerArtName').textContent=art.descricao+' · #'+art.artigo;
+  document.getElementById('locPickerModal').classList.add('open');
+}
+
+function switchLPTab(tab){
+  _lpTab=tab;
+  ['secs','corredor'].forEach(t=>{
+    const btn=document.getElementById('lpTab-'+t);
+    const panel=document.getElementById('lpPanel-'+t);
+    if(btn) btn.classList.toggle('active',t===tab);
+    if(panel) panel.style.display=t===tab?'':'none';
+  });
+  if(tab==='secs') renderSecPicker();
+}
+
+function renderSecPicker(){
+  const c=document.getElementById('locPickerSecs');
+  if(!c) return;
+  c.innerHTML=STORE_SECS.map(s=>{
+    const sel=_lpSelSecs.has(s.id);
+    return `<button onclick="toggleSecPick('${s.id}')" style="display:flex;align-items:center;gap:8px;background:${sel?'rgba(29,78,216,.25)':'var(--surface2)'};border:${sel?'1.5px solid #3b82f6':'1px solid var(--border)'};border-radius:8px;padding:8px 10px;cursor:pointer;font-family:'Barlow',sans-serif;transition:all .15s;text-align:left;">
+      <span style="font-size:18px;line-height:1">${s.icon}</span>
+      <span style="font-size:11px;font-weight:700;color:var(--text);flex:1">${s.label}</span>
+      ${sel?'<span style="font-size:13px;color:#3b82f6">✔</span>':''}
+    </button>`;
+  }).join('');
+  const btn=document.getElementById('lpSecConfirmBtn');
+  if(btn) btn.textContent=`✔ Confirmar na CR${_lpSelSecs.size?' ('+_lpSelSecs.size+')':''}`;
+}
+
+function toggleSecPick(id){
+  if(_lpSelSecs.has(id)) _lpSelSecs.delete(id); else _lpSelSecs.add(id);
+  renderSecPicker();
+}
+
+function confirmSecPicker(standalone){
+  const sec=_locPickerSec,artIdx=_locPickerArtIdx,crId=curCR[sec],srcSec=_locPickerSrcSec||sec;
+  const chosenSecs=[..._lpSelSecs].join('|');
+  if(!chosenSecs){closeLocPicker();return;}
+  if(standalone){
+    const ex=secAssignments[sec].find(x=>x.artIdx===artIdx&&(x.srcSec||sec)===srcSec);
+    if(ex) ex.secLoja=chosenSecs;
+    else secAssignments[sec].push({artIdx,secLoja:chosenSecs,srcSec:srcSec===sec?undefined:srcSec});
+  } else {
+    if(!crId){closeLocPicker();return;}
+    if(!assignments[sec][crId]) assignments[sec][crId]=[];
+    const ex=assignments[sec][crId].find(x=>x.artIdx===artIdx&&(x.srcSec||sec)===srcSec);
+    if(ex) ex.secLoja=chosenSecs||undefined;
+    else assignments[sec][crId].push({artIdx,xxl:false,img:null,loc:'',secLoja:chosenSecs,srcSec:srcSec===sec?undefined:srcSec});
+    refreshAssigned(sec); renderCR(sec,crId);
+  }
+  _finishPicker(sec);
+}
+
+function updateCorredorPreview(){
+  const val=(document.getElementById('lpCorredorInput').value||'').trim();
+  const p=document.getElementById('lpCorredorPreview');
+  if(p) p.innerHTML=val
+    ?`<span style="font-size:20px;font-weight:900;color:var(--gold);font-family:'Barlow Condensed',sans-serif;letter-spacing:2px;">🔢 Corredor ${val}</span>`
+    :'<span style="font-size:11px;opacity:.35">Escreve o número ou código do corredor</span>';
+}
+
+function confirmCorredorPicker(){
+  const sec=_locPickerSec,artIdx=_locPickerArtIdx,crId=curCR[sec],srcSec=_locPickerSrcSec||sec;
+  const val=(document.getElementById('lpCorredorInput').value||'').trim();
+  if(crId){
+    if(!assignments[sec][crId]) assignments[sec][crId]=[];
+    const ex=assignments[sec][crId].find(x=>x.artIdx===artIdx&&(x.srcSec||sec)===srcSec);
+    if(ex) ex.corredor=val||undefined;
+    else assignments[sec][crId].push({artIdx,xxl:false,img:null,loc:'',corredor:val||undefined,srcSec:srcSec===sec?undefined:srcSec});
+    refreshAssigned(sec); renderCR(sec,crId);
+  } else if(val){
+    // Standalone corredor (no CR)
+    const ex=secAssignments[sec].find(x=>x.artIdx===artIdx&&(x.srcSec||sec)===srcSec);
+    if(ex) ex.corredor=val;
+    else secAssignments[sec].push({artIdx,corredor:val,srcSec:srcSec===sec?undefined:srcSec});
+  }
+  _finishPicker(sec);
+}
+
+function _finishPicker(sec){
+  renderList(sec); updateStats(); markUnsaved();
+  if(document.getElementById('locModal').classList.contains('open')) renderLocView();
+  if(_locPickerBtn){
+    const orig=_locPickerBtn.textContent;
+    _locPickerBtn.textContent='✓'; _locPickerBtn.style.background='#16a34a';
+    setTimeout(()=>{_locPickerBtn.textContent=orig;_locPickerBtn.style.background='#0d9488';},800);
+  }
+  closeLocPicker();
+}
+
+function closeLocPicker(){document.getElementById('locPickerModal').classList.remove('open');}
+document.getElementById('locPickerModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeLocPicker();});
+
+// --- XXL TABLE ---
+function openXXLModal(){document.getElementById('xxlModal').classList.add('open');renderXXL(xxlTab);}
+function closeXXLModal(){document.getElementById('xxlModal').classList.remove('open');}
+function switchXXLTab(tab){
+  xxlTab=tab;
+  ['ferragens','ferramentas'].forEach(s=>document.getElementById('xxltab-'+s).classList.toggle('active',s===tab));
+  renderXXL(tab);
+}
+function renderXXL(sec){
+  const body=document.getElementById('xxl-body');
+  const rows=[];
+  Object.entries(assignments[sec]).forEach(([crId,list])=>{
+    list.forEach((item,i)=>{
+      if(!item.xxl)return;
+      rows.push({crId,art:DATA[sec][item.artIdx],item,gi:i});
+    });
+  });
+  if(!rows.length){body.innerHTML='<div style="text-align:center;color:var(--muted);padding:30px;font-size:13px">Sem artigos XXL atribuídos.<br><small>Use "+ XXL" no painel de artigos.</small></div>';return;}
+  const col=sec==='ferragens'?'var(--accent)':'var(--orange)';
+  body.innerHTML=`<table class="xxl-table"><thead><tr>
+    <th style="width:44px">Img</th><th>Artigo</th><th style="width:85px">Ref.</th>
+    <th style="width:70px">Mrg%</th><th style="width:80px">Vendas</th><th style="width:85px">CR</th><th style="width:36px"></th>
+  </tr></thead><tbody>${rows.map(r=>{
+    const img=r.item.img||r.art.img;
+    return `<tr>
+      <td>${img?`<img class="xxl-thumb" src="${img}">`:'<div style="width:40px;height:40px;background:var(--surface2);border-radius:4px;display:flex;align-items:center;justify-content:center">📦</div>'}</td>
+      <td><div style="font-weight:700;font-size:11px">${r.art.descricao}</div><div style="font-size:9px;color:var(--muted);margin-top:2px">📍 ${r.art.localizacao}</div></td>
+      <td style="font-family:monospace;font-size:10px;color:var(--muted)">${r.art.artigo}</td>
+      <td><span style="font-weight:700;color:${mrgCol(r.art.mrgp)}">${(r.art.mrgp*100).toFixed(1)}%</span></td>
+      <td style="font-size:10px">${eur(r.art.vendas)}</td>
+      <td><span class="xxl-cr-tag" style="background:${col}">${r.crId}</span></td>
+      <td><button class="btn-rm-xxl" onclick="rmXXL('${sec}','${r.crId}',${r.gi})">✕</button></td>
+    </tr>`;
+  }).join('')}</tbody></table>
+  <div style="margin-top:8px;font-size:10px;color:var(--muted);text-align:right">${rows.length} artigos XXL · ${sec==='ferragens'?'Ferragens':'Ferramentas'}</div>`;
+}
+function rmXXL(sec,crId,i){
+  if(assignments[sec][crId])assignments[sec][crId].splice(i,1);
+  renderCR(sec,crId);
+  renderList(sec);
+  renderXXL(xxlTab);
+  updateStats();
+  markUnsaved();
+}
+
+// --- ADD ARTICLE ---
+function openAddModal(){
+  newImgData=null;
+  ['nDesc','nRef','nLoc','nVendas','nMrge','nMrgp','nQtd'].forEach(id=>{document.getElementById(id).value='';});
+  document.getElementById('nBS').value='0';
+  document.getElementById('nImgPreview').innerHTML='📷 Clique para carregar imagem';
+  document.getElementById('addModal').classList.add('open');
+}
+function closeAddModal(){document.getElementById('addModal').classList.remove('open');}
+function setAddSec(s){
+  addSec=s;
+  ['ferragens','ferramentas'].forEach(k=>document.getElementById('addsec-'+k).classList.toggle('active',k===s));
+}
+function previewImg(inp){
+  const f=inp.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=e=>{newImgData=e.target.result;document.getElementById('nImgPreview').innerHTML=`<img src="${newImgData}" style="max-height:70px;max-width:100%;object-fit:contain;border-radius:4px;">`};
+  r.readAsDataURL(f);
+}
+function saveArticle(){
+  const desc=document.getElementById('nDesc').value.trim();
+  const ref=document.getElementById('nRef').value.trim();
+  if(!desc||!ref){alert('Preencha Descrição e Referência.');return;}
+  DATA[addSec].push({
+    artigo:ref,descricao:desc,
+    localizacao:document.getElementById('nLoc').value.trim()||(addSec==='ferragens'?'FERRAGENS':'FERRAMENTAS'),
+    vendas:parseFloat(document.getElementById('nVendas').value)||0,
+    mrge:parseFloat(document.getElementById('nMrge').value)||0,
+    mrgp:parseFloat(document.getElementById('nMrgp').value)||0,
+    qtd:parseInt(document.getElementById('nQtd').value)||0,
+    topBS:parseInt(document.getElementById('nBS').value),
+    img:newImgData
+  });
+  updateStats();
+  closeAddModal();
+  if(curCR[addSec])renderList(addSec);
+  markUnsaved();
+  toast('Artigo adicionado em '+(addSec==='ferragens'?'Ferragens':'Ferramentas')+'!');
+}
+
+// --- STATS ---
+function updateStats(){
+  const cf=Object.values(assignments.ferragens).filter(l=>l&&l.length>0).length;
+  const ct=Object.values(assignments.ferramentas).filter(l=>l&&l.length>0).length;
+  document.getElementById('statsBar').textContent=`Ferragens: ${cf} CRs · ${DATA.ferragens.length} artigos   |   Ferramentas: ${ct} CRs · ${DATA.ferramentas.length} artigos`;
+}
+
+// --- SAVE / LOAD ---
+const SAVE_KEY='planograma_v2';
+
+function buildSnap(){
+  return {
+    assignments:{
+      ferragens: Object.fromEntries(Object.entries(assignments.ferragens).map(([k,v])=>[k,(v||[]).map(it=>({artIdx:it.artIdx,xxl:it.xxl,loc:it.loc||undefined,secLoja:it.secLoja||undefined,corredor:it.corredor||undefined,colaboradora:it.colaboradora||undefined,srcSec:it.srcSec||undefined}))])),
+      ferramentas: Object.fromEntries(Object.entries(assignments.ferramentas).map(([k,v])=>[k,(v||[]).map(it=>({artIdx:it.artIdx,xxl:it.xxl,loc:it.loc||undefined,secLoja:it.secLoja||undefined,corredor:it.corredor||undefined,colaboradora:it.colaboradora||undefined,srcSec:it.srcSec||undefined}))]))
+    },
+    secAssignments:{
+      ferragens:(secAssignments.ferragens||[]).map(it=>({artIdx:it.artIdx,secLoja:it.secLoja||undefined,corredor:it.corredor||undefined,colaboradora:it.colaboradora||undefined,srcSec:it.srcSec||undefined})),
+      ferramentas:(secAssignments.ferramentas||[]).map(it=>({artIdx:it.artIdx,secLoja:it.secLoja||undefined,corredor:it.corredor||undefined,colaboradora:it.colaboradora||undefined,srcSec:it.srcSec||undefined}))
+    },
+    crNames:{ferragens:{...crNames.ferragens},ferramentas:{...crNames.ferramentas}},
+    artUrls:{
+      ferragens:DATA.ferragens.map(a=>a.url||null),
+      ferramentas:DATA.ferramentas.map(a=>a.url||null)
+    },
+    savedAt: new Date().toISOString(),
+    version: 2
+  };
+}
+
+function applySnap(snap){
+  if(snap.assignments){
+    ['ferragens','ferramentas'].forEach(sec=>{
+      const saved=snap.assignments[sec]||{};
+      Object.entries(saved).forEach(([crId,list])=>{
+        assignments[sec][crId]=(list||[]).map(it=>({...it,img:null}));
+      });
+    });
+  }
+  if(snap.secAssignments){
+    ['ferragens','ferramentas'].forEach(sec=>{
+      secAssignments[sec]=(snap.secAssignments[sec]||[]);
+    });
+  }
+  if(snap.crNames){
+    ['ferragens','ferramentas'].forEach(sec=>{
+      Object.assign(crNames[sec], snap.crNames[sec]||{});
+    });
+  }
+  if(snap.artUrls){
+    ['ferragens','ferramentas'].forEach(sec=>{
+      (snap.artUrls[sec]||[]).forEach((url,i)=>{if(url&&DATA[sec][i])DATA[sec][i].url=url;});
+    });
+  }
+  // Re-render
+  buildPlanogram('ferragens');
+  buildPlanogram('ferramentas');
+  ['ferragens','ferramentas'].forEach(sec=>{
+    Object.keys(assignments[sec]).forEach(crId=>renderCR(sec,crId));
+    renderList(sec);
+  });
+  updateStats();
+}
+
+// -- Gravar local (localStorage) -------------------------------
+function saveData(){
+  try{
+    localStorage.setItem(SAVE_KEY, JSON.stringify(buildSnap()));
+    const el=document.getElementById('saveStatus');
+    const t=new Date().toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'});
+    if(el){el.textContent='✔ Gravado '+t;el.style.color='#3fb950';}
+    toast('Gravado localmente. Use 📤 Exportar para partilhar com a equipa.');
+  } catch(err){
+    alert('Erro ao gravar: '+err.message);
+  }
+}
+
+function loadData(){
+  try{
+    // Prioridade 1: dados embutidos no HTML (partilhado pela equipa)
+    const embedded=window.__EMBEDDED_SNAP__;
+    if(embedded&&embedded.assignments){
+      applySnap(embedded);
+      // Guardar tamb-m no localStorage local
+      localStorage.setItem(SAVE_KEY,JSON.stringify(embedded));
+      const el=document.getElementById('saveStatus');
+      const when=embedded.savedAt?new Date(embedded.savedAt).toLocaleString('pt-PT',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'';
+      if(el){el.textContent=when?'✔ Dados de '+when:'✔ Dados carregados';el.style.color='#3fb950';}
+      return;
+    }
+    // Prioridade 2: localStorage (sess-o local)
+    const raw=localStorage.getItem(SAVE_KEY);
+    if(!raw)return;
+    const snap=JSON.parse(raw);
+    applySnap(snap);
+    const el=document.getElementById('saveStatus');
+    const when=snap.savedAt?new Date(snap.savedAt).toLocaleString('pt-PT',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'';
+    if(el){el.textContent=when?'✔ Local '+when:'✔ Dados locais';el.style.color='#58a6ff';}
+  } catch(e){
+    console.warn('Erro ao carregar dados:',e);
+  }
+}
+
+// -- Mobile panel swipe-to-close -----------------------------
+(function(){
+  let startY=0;
+  document.addEventListener('touchstart',e=>{startY=e.touches[0].clientY;},{passive:true});
+  document.addEventListener('touchend',e=>{
+    const dy=e.changedTouches[0].clientY-startY;
+    if(dy>80){
+      // Swipe down - close any open panel
+      ['ferragens','ferramentas'].forEach(sec=>{
+        const p=document.getElementById('panel-'+sec);
+        if(p&&p.classList.contains('open')) closePanel(sec);
+      });
+    }
+  },{passive:true});
+})(); // partilhado entre todos os utilizadores
+const STORAGE_KEY = 'plano_grelhas_410_v1';
+
+let _saveTimer=null;
+function markUnsaved(){
+  const el=document.getElementById('saveStatus');
+  if(el){el.textContent='● Por gravar';el.style.color='#f59e0b';}
+  if(_saveTimer) clearTimeout(_saveTimer);
+  _saveTimer=setTimeout(()=>{
+    if(window.storage) artifactSave();
+    else saveData();
+  },3000);
+}
+
+function setStatus(msg,color){
+  const el=document.getElementById('saveStatus');
+  if(el){el.textContent=msg;el.style.color=color||'var(--muted)';}
+}
+
+async function artifactSave(){
+  setStatus('A gravar...','#f59e0b');
+  const snap=buildSnap();
+  try{
+    const result=await window.storage.set(STORAGE_KEY, JSON.stringify(snap), true); // shared=true
+    if(result){
+      const t=new Date().toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'});
+      setStatus('✔ Gravado '+t,'#3fb950');
+      toast('Gravado! Todos os utilizadores verão as alterações.');
+    } else {
+      setStatus('⚠ Erro ao gravar','#e53e3e');
+      // Fallback to localStorage
+      localStorage.setItem('pg_local_backup', JSON.stringify(snap));
+    }
+  } catch(e){
+    setStatus('⚠ Erro','#e53e3e');
+    localStorage.setItem('pg_local_backup', JSON.stringify(snap));
+    console.warn('Storage error:',e);
+  }
+}
+
+async function artifactLoad(){
+  try{
+    const result=await window.storage.get(STORAGE_KEY, true); // shared=true
+    if(result&&result.value){
+      const snap=JSON.parse(result.value);
+      if(snap&&snap.assignments){
+        applySnap(snap);
+        const when=snap.savedAt?new Date(snap.savedAt).toLocaleString('pt-PT',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'';
+        setStatus(when?'✔ '+when:'✔ Carregado','#3fb950');
+        return true;
+      }
+    }
+  } catch(e){
+    console.warn('Storage load error:',e);
+  }
+  // Fallback: localStorage
+  try{
+    const raw=localStorage.getItem('pg_local_backup')||localStorage.getItem(SAVE_KEY);
+    if(raw){
+      const snap=JSON.parse(raw);
+      if(snap&&snap.assignments){
+        applySnap(snap);
+        setStatus('● Local (sem nuvem)','#f59e0b');
+        return true;
+      }
+    }
+  } catch(e){}
+  return false;
+}
+
+// localStorage fallback
+function saveData(){
+  try{
+    const snap=buildSnap();
+    localStorage.setItem(SAVE_KEY,JSON.stringify(snap));
+    const t=new Date().toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'});
+    setStatus('✔ Local '+t,'#58a6ff');
+  } catch(e){ console.warn(e); }
+}
+function loadData(){
+  try{
+    const raw=localStorage.getItem(SAVE_KEY);
+    if(!raw)return false;
+    const snap=JSON.parse(raw);
+    if(snap&&snap.assignments){applySnap(snap);return true;}
+  } catch(e){}
+  return false;
+}
+
+function exportHTML(){
+  const snap=buildSnap();
+  const snapJSON=JSON.stringify(snap);
+  // Get current page HTML
+  let html=document.documentElement.outerHTML;
+  // Replace or inject the embedded data script
+  const marker='/* __EMBEDDED_SNAP__ */';
+  const embedScript='<'+'script id="__snap__">window.__EMBEDDED_SNAP__='+snapJSON+';'+'<'+'/script>';
+  // Remove any existing embedded snap
+  html=html.replace(new RegExp('<'+'script id="__snap__">[\\s\\S]*?<\\/script>','g'),'');
+  // Inject right before </head>
+  html=html.replace('</head>',embedScript+'\n</head>');
+  const blob=new Blob([html],{type:'text/html;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  const d=new Date();
+  const ts=d.toISOString().slice(0,10);
+  a.href=url; a.download=`Plano_Grelhas_410_${ts}.html`;
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a); URL.revokeObjectURL(url);
+  const el=document.getElementById('saveStatus');
+  if(el){el.textContent='✔ HTML exportado '+d.toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'});el.style.color='#16a34a';}
+  toast('HTML exportado! Partilha o ficheiro com a equipa.');
+}
+
+// -- Importar JSON (carregar ficheiro da equipa) ---------------
+function importJSON(input){
+  const file=input.files[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const snap=JSON.parse(e.target.result);
+      if(!snap.assignments) throw new Error('Ficheiro inválido');
+      // Reset current state
+      ['ferragens','ferramentas'].forEach(sec=>{
+        Object.keys(assignments[sec]).forEach(k=>delete assignments[sec][k]);
+        secAssignments[sec]=[];
+        Object.keys(crNames[sec]).forEach(k=>delete crNames[sec][k]);
+      });
+      applySnap(snap);
+      // Also save to local cache
+      localStorage.setItem(SAVE_KEY, JSON.stringify(snap));
+      const el=document.getElementById('saveStatus');
+      const when=snap.savedAt?new Date(snap.savedAt).toLocaleString('pt-PT',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'';
+      if(el){el.textContent='✔ Importado '+when;el.style.color='#16a34a';}
+      toast('Planograma carregado com sucesso!');
+    } catch(err){
+      alert('Erro ao importar: '+err.message+'\nVerifica que o ficheiro é válido.');
+    }
+  };
+  reader.readAsText(file);
+  input.value=''; // reset so same file can be imported again
+}
+
+function toast(msg){
+  const t=document.createElement('div');
+  t.textContent='✅ '+msg;
+  t.style.cssText='position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#3fb950;color:#000;padding:9px 18px;border-radius:8px;font-weight:700;font-size:12px;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,.4)';
+  document.body.appendChild(t);setTimeout(()=>t.remove(),2800);
+}
+
+// Ctrl+S shortcut
+document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='s'){e.preventDefault();saveData();}});
+
+// close modals on backdrop click
+document.getElementById('locModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeLocModal();});
+document.getElementById('xxlModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeXXLModal();});
+document.getElementById('addModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeAddModal();});
+
+// --- INIT ---
+(async function init(){
+  // Load shared data from artifact storage
+  if(window.storage){
+    await artifactLoad();
+  } else {
+    loadData();
+  }
+  buildPlanogram('ferragens');
+  buildPlanogram('ferramentas');
+  ['ferragens','ferramentas'].forEach(sec=>{
+    Object.keys(assignments[sec]).forEach(crId=>renderCR(sec,crId));
+    renderList(sec);
+  });
+  updateStats();
+})();
+</script>
+</body>
+</html>
